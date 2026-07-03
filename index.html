@@ -1302,4 +1302,41 @@ async function fetchLiveCounts() {
     svS(s);
     updateKPIs();
     document.getElementById('lastUpdated').textContent = new Date().toLocaleString() + ' (live)';
-  } catch(e) { console.warn('Live count fetch fai
+  } catch(e) { console.warn('Live count fetch failed:', e); }
+}
+buildDash();buildCards();buildVolMatrix();
+fetchLiveCounts();
+setInterval(fetchLiveCounts, 60000); // refresh every 60s
+document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
+
+// ── Cancel form handling
+function toggleCancel(key) {
+  const cb  = document.getElementById('cancel-cb-'  + key);
+  const btn = document.getElementById('cancel-btn-' + key);
+  if (!cb || !btn) return;
+  btn.classList.toggle('visible', cb.checked);
+}
+
+function handleCancel(key, form) {
+  const cb    = document.getElementById('cancel-cb-' + key);
+  const email = document.getElementById('cancel-email-' + key);
+  if (!cb || !cb.checked) { alert('Please check the cancellation box to confirm.'); return; }
+  if (!email || !email.value) { alert('Please enter your email address.'); return; }
+
+  // POST cancellation directly to Apps Script Web App
+  if (WEB_APP_URL) {
+    const params = new URLSearchParams({activity: key, cancel: 'true', email: email.value});
+    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(()=>{});
+  }
+
+  setTimeout(() => {
+    document.getElementById('cancel-msg-' + key).style.display = 'block';
+    form.reset();
+    cb.checked = false;
+    document.getElementById('cancel-btn-' + key).classList.remove('visible');
+  }, 800);
+}
+
+</script>
+</body>
+</html>
