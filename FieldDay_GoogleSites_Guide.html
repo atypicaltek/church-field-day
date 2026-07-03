@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Church Field Day — Google Sites Setup Guide</title>
+<style>
+:root{
+  --navy:#1F3864;--blue:#2F5496;--lb:#D6E4F7;--gold:#C9A84C;--gold-lt:#FFF2CC;
+  --green:#1E6B3C;--green-lt:#E2EFDA;--red:#C0392B;--red-lt:#FCE4D6;
+  --gray:#F4F6FB;--border:#DDE3F0;--text:#1A1A2E;--muted:#6B7280;--white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--gray);color:var(--text);font-size:14px}
+.shell{max-width:900px;margin:0 auto;padding:24px 16px 60px}
+
+/* Header */
+.guide-header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+  border-radius:14px;padding:32px 36px;margin-bottom:28px;box-shadow:0 4px 18px rgba(31,56,100,.25)}
+.guide-header h1{font-size:1.7rem;margin-bottom:6px}
+.guide-header p{opacity:.85;font-size:.95rem;line-height:1.5}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  border-radius:20px;padding:4px 14px;font-size:.78rem}
+
+/* TOC */
+.toc{background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:28px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:5px solid var(--gold)}
+.toc h2{font-size:1rem;color:var(--navy);margin-bottom:12px}
+.toc ol{padding-left:20px;display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.toc li{font-size:.88rem;padding:3px 0}
+.toc a{color:var(--blue);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+
+/* Phase cards */
+.phase{background:#fff;border-radius:14px;margin-bottom:20px;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden}
+.phase-header{background:var(--navy);color:#fff;padding:14px 24px;
+  display:flex;align-items:center;gap:12px}
+.phase-num{background:var(--gold);color:var(--navy);font-weight:700;font-size:1.1rem;
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase-header h2{font-size:1.05rem}
+.phase-header .est{margin-left:auto;font-size:.78rem;opacity:.75;white-space:nowrap}
+.phase-body{padding:20px 24px}
+
+/* Steps */
+.step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
+.step:last-child{margin-bottom:0}
+.step-dot{background:var(--blue);color:#fff;border-radius:50%;width:26px;height:26px;
+  font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body h3{font-size:.92rem;color:var(--navy);margin-bottom:3px}
+.step-body p{font-size:.85rem;color:#444;line-height:1.55}
+.step-body ul{margin:6px 0 0 16px;font-size:.83rem;color:#444;line-height:1.6}
+.step-body code{background:#f0f2f8;border:1px solid var(--border);padding:2px 7px;
+  border-radius:4px;font-family:monospace;font-size:.82rem;color:var(--navy)}
+
+/* Screen mock */
+.screen-mock{background:#f8f9fd;border:2px dashed var(--border);border-radius:10px;
+  padding:14px 18px;margin:10px 0;font-size:.82rem;color:var(--muted);position:relative}
+.screen-mock .sm-title{position:absolute;top:-10px;left:14px;background:#fff;
+  padding:0 8px;font-size:.72rem;font-weight:700;color:var(--blue);border:1px solid var(--border);border-radius:4px}
+.screen-mock .menu-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.menu-item{background:var(--navy);color:#fff;padding:4px 10px;border-radius:4px;font-size:.75rem}
+.menu-item.active{background:var(--gold);color:var(--navy)}
+.panel-row{display:flex;gap:10px;flex-wrap:wrap}
+.panel{background:#fff;border:1px solid var(--border);border-radius:6px;
+  padding:8px 12px;font-size:.78rem;color:var(--text);min-width:100px;text-align:center}
+.panel.highlight{border-color:var(--gold);background:var(--gold-lt)}
+.click-arrow{color:var(--gold);font-weight:700;font-size:1rem;align-self:center}
+
+/* Tips & warnings */
+.tip{background:var(--green-lt);border-left:4px solid var(--green);
+  border-radius:6px;padding:10px 14px;font-size:.83rem;color:#1a3d25;margin:10px 0}
+.warn{background:var(--gold-lt);border-left:4px solid var(--gold);
+  border-radius:6px;padding:10px 14px;font-size:.83rem;color:#5a3e00;margin:10px 0}
+.info{background:var(--lb);border-left:4px solid var(--blue);
+  border-radius:6px;padding:10px 14px;font-size:.83rem;color:#1a2d5a;margin:10px 0}
+
+/* Embed snippet */
+.embed-snippet{background:#1A1A2E;color:#a8d8ea;border-radius:8px;padding:12px 16px;
+  font-family:monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;margin:8px 0}
+.embed-snippet .hl{color:var(--gold)}
+
+/* Page list */
+.page-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:12px 0}
+.page-item{background:var(--lb);border:1px solid var(--blue);border-radius:8px;
+  padding:10px 14px;font-size:.83rem;color:var(--navy)}
+.page-item .icon{font-size:1.1rem;margin-bottom:3px}
+.page-item .pname{font-weight:700}
+.page-item .pdesc{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* Checklist */
+.checklist{list-style:none;margin:10px 0}
+.checklist li{padding:5px 0;font-size:.88rem;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border)}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:"☐";font-size:1rem;color:var(--blue);flex-shrink:0}
+.checklist li.done::before{content:"✅"}
+
+/* URL box */
+.url-box{background:#fff;border:1.5px solid var(--border);border-radius:8px;
+  padding:10px 14px;font-family:monospace;font-size:.8rem;color:var(--navy);
+  word-break:break-all;margin:6px 0}
+
+footer{text-align:center;color:var(--muted);font-size:.75rem;margin-top:40px;
+  padding-top:20px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ── HEADER ── -->
+<div class="guide-header">
+  <h1>⛪ Church Field Day — Google Sites Setup Guide</h1>
+  <p>Step-by-step instructions to create your volunteer signup website and embed all 11 Google Forms. No coding required.</p>
+  <div class="badges">
+    <span class="badge">⏱ ~45 minutes total</span>
+    <span class="badge">🖥 Desktop browser recommended</span>
+    <span class="badge">📧 Requires Google account</span>
+    <span class="badge">💲 100% free</span>
+  </div>
+</div>
+
+<!-- ── TOC ── -->
+<div class="toc">
+  <h2>📋 What We're Building</h2>
+  <ol>
+    <li><a href="#phase1">Run the Form Builder Script</a></li>
+    <li><a href="#phase2">Create Your Google Site</a></li>
+    <li><a href="#phase3">Set Up Site Pages</a></li>
+    <li><a href="#phase4">Embed the Dashboard</a></li>
+    <li><a href="#phase5">Embed All 11 Forms</a></li>
+    <li><a href="#phase6">Add Navigation & Branding</a></li>
+    <li><a href="#phase7">Publish & Share</a></li>
+    <li><a href="#phase8">Print QR Codes</a></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 1 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase1">
+  <div class="phase-header">
+    <div class="phase-num">1</div>
+    <h2>Run the Form Builder Script (creates all 11 forms automatically)</h2>
+    <span class="est">⏱ ~5 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="info">This step uses <strong>FieldDay_CreateForms.gs</strong> — a Google Apps Script that auto-creates every form and links them all to one master spreadsheet. You run it once and it does the rest.</div>
+
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Open Google Apps Script</h3>
+        <p>In a new browser tab, go to <code>script.google.com</code> and sign in with your church Google account.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Create a new project</h3>
+        <p>Click <strong>New project</strong> (top left). The editor opens with a blank <code>Code.gs</code> file.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Paste the script</h3>
+        <p>Open <strong>FieldDay_CreateForms.gs</strong> in a text editor, select all, copy, then paste it into the Apps Script editor — replacing the existing code completely.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-body">
+        <h3>Run the function</h3>
+        <p>In the dropdown that says "Select function," choose <code>createAllFieldDayForms</code>. Then click the ▶ Run button.</p>
+        <div class="warn">⚠️ A permissions popup will appear. Click <strong>Review permissions → Advanced → Go to project (unsafe)</strong> → Allow. This is safe — it's your own script accessing your own Google account.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">5</div>
+      <div class="step-body">
+        <h3>Collect your form URLs</h3>
+        <p>When done (≈ 2–3 min), click <strong>View → Logs</strong>. You'll see all 11 form URLs. Also open Google Drive — a folder called <strong>"Field Day Forms"</strong> holds all forms, and a spreadsheet called <strong>"Field Day Signups — Master"</strong> has a <em>Form Links & Embed Codes</em> tab with every URL in one place.</p>
+        <div class="tip">✅ The "Embed URL" column is what you'll paste into Google Sites in Phase 5.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 2 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase2">
+  <div class="phase-header">
+    <div class="phase-num">2</div>
+    <h2>Create Your Google Site</h2>
+    <span class="est">⏱ ~5 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Go to Google Sites</h3>
+        <p>In a new tab, go to <code>sites.google.com</code>. Click the large <strong>＋</strong> (Blank site) button.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Name your site</h3>
+        <p>At the top left, click <em>"Enter site name"</em> and type: <code>Church Field Day Signups</code> (or your preferred name). Press Enter.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Pick a theme</h3>
+        <p>In the right panel, click <strong>Themes</strong>. Choose any theme — <em>Simple</em> or <em>Diplomat</em> work well for a clean, professional look. You can change colors to match your church brand.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-body">
+        <h3>Edit the home page banner</h3>
+        <p>Click the top banner area. Change the title text to: <strong>⛪ Church Field Day — Volunteer Signup</strong>. Add a subtitle: <em>400–800 Attendees · 8 Sites · 11 Activities</em>. Optionally upload your church logo as the background image.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 3 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase3">
+  <div class="phase-header">
+    <div class="phase-num">3</div>
+    <h2>Set Up Site Pages (one per activity + a home page)</h2>
+    <span class="est">⏱ ~10 min</span>
+  </div>
+  <div class="phase-body">
+    <p style="margin-bottom:12px;font-size:.88rem;color:#444">You'll create 13 pages total. The navigation menu auto-updates as you add pages.</p>
+    <div class="page-list">
+      <div class="page-item"><div class="icon">🏠</div><div class="pname">Home</div><div class="pdesc">Dashboard + overview (already exists)</div></div>
+      <div class="page-item"><div class="icon">🍽</div><div class="pname">Food Signup</div><div class="pdesc">Food Servers form</div></div>
+      <div class="page-item"><div class="icon">🥤</div><div class="pname">Drinks Signup</div><div class="pdesc">Drinks Volunteers form</div></div>
+      <div class="page-item"><div class="icon">🎯</div><div class="pname">Games Signup</div><div class="pdesc">Games Station Staff form</div></div>
+      <div class="page-item"><div class="icon">🎵</div><div class="pname">DJ / Music</div><div class="pdesc">Song Requests + MC form</div></div>
+      <div class="page-item"><div class="icon">🎤</div><div class="pname">Karaoke Signup</div><div class="pdesc">Singer registration form</div></div>
+      <div class="page-item"><div class="icon">🏀</div><div class="pname">Basketball</div><div class="pdesc">Team registration form</div></div>
+      <div class="page-item"><div class="icon">🧒</div><div class="pname">Kid Games</div><div class="pdesc">Chaperone signup form</div></div>
+      <div class="page-item"><div class="icon">🅿</div><div class="pname">Parking</div><div class="pdesc">Parking attendant form</div></div>
+      <div class="page-item"><div class="icon">⛺</div><div class="pname">Site Setup</div><div class="pdesc">Setup crew + equipment form</div></div>
+      <div class="page-item"><div class="icon">🍿</div><div class="pname">Popcorn Machine</div><div class="pdesc">Station operators form</div></div>
+      <div class="page-item"><div class="icon">🥨</div><div class="pname">Pretzels</div><div class="pdesc">Station operators form</div></div>
+      <div class="page-item"><div class="icon">📊</div><div class="pname">Volunteer Info</div><div class="pdesc">Requirements & deadlines table</div></div>
+    </div>
+
+    <div class="step" style="margin-top:16px">
+      <div class="step-dot">→</div>
+      <div class="step-body">
+        <h3>How to add a page</h3>
+        <p>In the right panel, click the <strong>Pages</strong> tab (looks like stacked pages). Click <strong>＋ (Add page)</strong> at the bottom. Type the page name. Repeat for each page in the list above.</p>
+        <div class="tip">💡 Drag pages in the Pages panel to reorder them — your navigation menu will match.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 4 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase4">
+  <div class="phase-header">
+    <div class="phase-num">4</div>
+    <h2>Embed the Live Dashboard on the Home Page</h2>
+    <span class="est">⏱ ~3 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="info">The <strong>FieldDay_Live_Dashboard.html</strong> file needs to be hosted somewhere public before it can be embedded. The easiest free option is <strong>GitHub Pages</strong> (free, takes 2 minutes).</div>
+
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Host the dashboard on GitHub Pages (free)</h3>
+        <ul>
+          <li>Go to <code>github.com</code> → Sign in or create a free account</li>
+          <li>Click <strong>New repository</strong> → name it <code>fielddaydashboard</code> → set to <strong>Public</strong> → Create</li>
+          <li>Click <strong>Add file → Upload files</strong> → drag in <code>FieldDay_Live_Dashboard.html</code></li>
+          <li>Rename it to <code>index.html</code> in the upload dialog → Commit</li>
+          <li>Go to <strong>Settings → Pages → Source: main branch</strong> → Save</li>
+          <li>Your dashboard URL will be: <code>https://[your-username].github.io/fielddaydashboard/</code></li>
+        </ul>
+        <div class="tip">✅ GitHub Pages is completely free for public sites. No account required beyond a basic GitHub login.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Embed it in Google Sites</h3>
+        <p>On the <strong>Home</strong> page in Google Sites: click <strong>Insert → Embed</strong> → paste your GitHub Pages URL → click <strong>Insert</strong>. Resize the embed block to fill most of the page.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Add a text section above the embed</h3>
+        <p>Insert a <strong>Text box</strong> with a welcome message explaining the event, deadline reminders, and which site each visitor is from.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 5 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase5">
+  <div class="phase-header">
+    <div class="phase-num">5</div>
+    <h2>Embed All 11 Google Forms (one per activity page)</h2>
+    <span class="est">⏱ ~12 min (~1 min each)</span>
+  </div>
+  <div class="phase-body">
+    <div class="tip">✅ Google Sites embeds Google Forms <em>natively</em> — no hosting needed. This is the easiest part!</div>
+
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Open the "Form Links & Embed Codes" tab</h3>
+        <p>Go to your master spreadsheet → open the <strong>Form Links & Embed Codes</strong> tab. Keep this open in a separate browser tab for reference.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>For each activity page, embed its form</h3>
+        <p>In Google Sites, navigate to the activity page (e.g., Food Signup). Then:</p>
+        <ul>
+          <li>Click <strong>Insert → Google Forms</strong> (it's in the right panel under "From Drive")</li>
+          <li>Find the matching form (e.g., "Field Day — Food Signup") → click it</li>
+          <li>The form embeds automatically, full width</li>
+        </ul>
+        <div class="screen-mock">
+          <span class="sm-title">Google Sites — Insert panel</span>
+          <div class="menu-row">
+            <div class="menu-item">Text box</div>
+            <div class="menu-item">Images</div>
+            <div class="menu-item active">Google Forms ←</div>
+            <div class="menu-item">Embed</div>
+          </div>
+          <div class="panel-row">
+            <div class="panel">📋 Field Day — Food Signup</div>
+            <div class="click-arrow">→</div>
+            <div class="panel highlight">Select → Inserts form ✓</div>
+          </div>
+        </div>
+        <div class="warn">⚠️ If you don't see your form in the Drive picker, make sure you're signed into the same Google account you used to run the script.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Add a description above each form</h3>
+        <p>Insert a <strong>Text box</strong> above each embedded form explaining what volunteers in that role do, the deadline, and how many are needed from their site. Example for Food page:</p>
+        <div class="screen-mock">
+          <span class="sm-title">Suggested text for Food Signup page</span>
+          <strong>🍽 Food Servers Signup — Deadline: 3 weeks before event</strong><br><br>
+          Each site is pre-assigned a dish by the Food Chair. Sign up here to be a server at your site's food station. Each station needs enough volunteers to serve 400–800 attendees:
+          <ul style="margin:6px 0 0 18px;font-size:.82rem">
+            <li>The Cathedral: 12 servers needed</li>
+            <li>All other sites: 8 servers needed each</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-body">
+        <h3>Repeat for all 11 activity pages</h3>
+        <p>Each page gets one embedded Google Form. Use the table below as your checklist:</p>
+        <ul class="checklist" id="embed-checklist">
+          <li>Food Signup page → "Field Day — Food Signup" form</li>
+          <li>Drinks Signup page → "Field Day — Drinks Signup" form</li>
+          <li>Games Signup page → "Field Day — Games Signup" form</li>
+          <li>DJ / Music page → "Field Day — DJ / Music Requests" form</li>
+          <li>Karaoke Signup page → "Field Day — Karaoke Signup" form</li>
+          <li>Basketball page → "Field Day — Basketball Tournament Registration" form</li>
+          <li>Kid Games page → "Field Day — Kid Games Signup" form</li>
+          <li>Parking page → "Field Day — Parking Volunteer Signup" form</li>
+          <li>Site Setup page → "Field Day — Site Setup Signup" form</li>
+          <li>Popcorn Machine page → "Field Day — Popcorn Machine Signup" form</li>
+          <li>Pretzels page → "Field Day — Pretzels Signup" form</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 6 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase6">
+  <div class="phase-header">
+    <div class="phase-num">6</div>
+    <h2>Add Navigation, Branding & Announcements</h2>
+    <span class="est">⏱ ~5 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Navigation menu</h3>
+        <p>Google Sites auto-generates a top navigation bar from your pages. To add a dropdown grouping (e.g., "Signups" → 11 sub-pages): in the Pages panel, drag child pages underneath a parent page. A dropdown group will appear automatically in the nav.</p>
+        <div class="tip">💡 Suggested nav structure: <strong>Home</strong> · <strong>Signups ▾</strong> (11 sub-pages) · <strong>Volunteer Info</strong></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Header logo & colors</h3>
+        <p>Click the site header area → <strong>Change image</strong> to upload your church logo or a field day graphic. Go to <strong>Themes → Customize</strong> to match your church brand colors.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Volunteer Info page</h3>
+        <p>On the <strong>Volunteer Info</strong> page, insert a <strong>Table</strong> or paste the requirements matrix directly (copy from the Excel file). Add deadline reminders and site lead contact info here.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      <div class="step-body">
+        <h3>Add a site-wide announcement banner</h3>
+        <p>On every page, add a text section at the top with the event date and a short reminder. Example: <em>"🗓 Event Date: [Date TBD] · Signups close 2–3 weeks before · Questions? Contact your Site Lead."</em></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 7 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase7">
+  <div class="phase-header">
+    <div class="phase-num">7</div>
+    <h2>Publish & Share the Site</h2>
+    <span class="est">⏱ ~2 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Publish the site</h3>
+        <p>Click the blue <strong>Publish</strong> button (top right). Your URL will be: <code>sites.google.com/view/church-field-day-signups</code> (or your chosen name — you can customize it here).</p>
+        <div class="warn">⚠️ Choose "Anyone with the link" or "Anyone" under who can view — otherwise volunteers outside your Google org won't be able to access the forms.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Share with Site Leads</h3>
+        <p>Copy the published URL and send it to all 8 Site Leads via text/email/group chat. They share it with their members. Each volunteer clicks the link, navigates to their activity page, and fills out the form — responses go directly into the master spreadsheet.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Optional: custom domain</h3>
+        <p>If your church has a website, you can link it. Go to <strong>Settings → Custom domain</strong> and follow Google's instructions to map a subdomain like <code>fielddayfbc.com</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- PHASE 8 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase" id="phase8">
+  <div class="phase-header">
+    <div class="phase-num">8</div>
+    <h2>Print QR Codes for Each Form Page</h2>
+    <span class="est">⏱ ~5 min</span>
+  </div>
+  <div class="phase-body">
+    <div class="step">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <h3>Get your page URLs</h3>
+        <p>After publishing, each page has its own URL. Navigate to each page on the live site and copy the URL from your browser bar. They'll look like:<br>
+        <code>sites.google.com/view/church-field-day-signups/food-signup</code></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <h3>Generate QR codes (free, no account needed)</h3>
+        <p>Go to <code>qr-code-generator.com</code>. Paste each page URL → download the QR code as a PNG. Alternatively, in Chrome: click the address bar → <strong>Share → Create QR code</strong> → download.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <h3>Print and post at the event</h3>
+        <p>Print each QR code on a half-sheet or full sheet with the activity name and station description. Post at the central signup table and at each activity station. The <strong>FieldDay_Signup_Portal.html</strong> file (from your earlier files) also has a printable QR grid page for all 11 codes at once.</p>
+        <div class="tip">💡 Use the QR portal page's <strong>"Home / QR Codes"</strong> tab to print all 11 QR codes at once — just update the form URLs to your live Google Sites page URLs inside the script for the portal.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- FINAL CHECKLIST -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-num">✓</div>
+    <h2>Final Checklist Before Sharing</h2>
+    <span class="est">~5 min review</span>
+  </div>
+  <div class="phase-body">
+    <ul class="checklist">
+      <li>All 11 forms created and linked to master spreadsheet</li>
+      <li>All 11 pages created in Google Sites</li>
+      <li>All 11 forms embedded — one per page</li>
+      <li>Live dashboard embedded on Home page</li>
+      <li>Food Chair has updated food item dropdowns in the Food Signup form</li>
+      <li>Games Chair has updated game station names in the Games form</li>
+      <li>Site is published with "Anyone with link" viewing permissions</li>
+      <li>URL shared with all 8 Site Leads</li>
+      <li>QR codes printed for event day</li>
+      <li>Registration Lead knows how to access the master spreadsheet</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  Church Field Day · Google Sites Setup Guide<br>
+  Volunteer signup website at <strong>sites.google.com/view/[your-site-name]</strong> after publishing.<br>
+  Questions? Contact your Registration Lead or Event Director.
+</footer>
+</div>
+</body>
+</html>
