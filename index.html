@@ -693,12 +693,18 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
         <input type="email" name="entry.530556213" placeholder="your@email.com" required>
       </div>
       <div class="form-group">
-        <label>Player Names (all 5–8 players) <span class="req">*</span></label>
-        <textarea name="entry.1625346325" placeholder="1.
-2.
-3.
-4.
-5." required></textarea>
+        <label>Player Names <span class="req">*</span> <small style="font-weight:400;color:#888">(5 required, up to 8)</small></label>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px">
+          <input type="text" class="bball-player" data-num="1" placeholder="Player 1 *" required style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="2" placeholder="Player 2 *" required style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="3" placeholder="Player 3 *" required style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="4" placeholder="Player 4 *" required style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="5" placeholder="Player 5 *" required style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="6" placeholder="Player 6 (optional)" style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="7" placeholder="Player 7 (optional)" style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+          <input type="text" class="bball-player" data-num="8" placeholder="Player 8 (optional)" style="padding:8px 10px;border:1px solid #d0d5dd;border-radius:6px;font-size:.95rem">
+        </div>
+        <textarea name="entry.1625346325" id="bball-players-combined" style="display:none"></textarea>
       </div>
       <div class="form-group">
         <label>Jersey Color Preference </label>
@@ -1081,17 +1087,30 @@ function showTab(id) {
 
 // ── Form submission → Apps Script Web App (writes to sheet + sends email)
 function handleSubmit(key, form) {
+  // Combine basketball player inputs into hidden textarea before sending
+  if (key === 'basketball') {
+    const players = [...form.querySelectorAll('.bball-player')]
+      .map((inp, i) => inp.value.trim() ? (i+1) + '. ' + inp.value.trim() : '')
+      .filter(Boolean).join('\n');
+    const combined = form.querySelector('#bball-players-combined');
+    if (combined) combined.value = players;
+  }
   if (WEB_APP_URL) {
     const params = {activity: key};
     form.querySelectorAll('.form-group').forEach(g => {
-      const lbl = (g.querySelector('label')?.textContent || '').replace(/\s*\*\s*$/, '').trim();
+      const lbl = (g.querySelector('label')?.textContent || '').replace(/[\s\*]+$/, '').replace(/\s*\(.*?\)\s*$/, '').trim();
       const val = g.querySelector('select')?.value
                || g.querySelector('textarea')?.value
                || g.querySelector('input[type=radio]:checked')?.value
-               || g.querySelector('input:not([type=radio]):not([type=checkbox])')?.value
+               || g.querySelector('input:not([type=radio]):not([type=checkbox]):not(.bball-player)')?.value
                || '';
       if (lbl) params[lbl] = val;
     });
+    // For basketball, explicitly add player names from combined field
+    if (key === 'basketball') {
+      const combined = form.querySelector('#bball-players-combined');
+      if (combined) params['Player Names'] = combined.value;
+    }
     fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: new URLSearchParams(params)}).catch(()=>{});
   }
   setTimeout(() => {
@@ -1279,64 +1298,4 @@ function updateKPIs(){
   buildCards();buildVolMatrix();
   document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
 }
-function chg(aId,sk,val){setV(aId,sk,val);updateKPIs();}
-
-// ── Live dashboard counts from Apps Script web app
-// PASTE YOUR DEPLOYED WEB APP URL BELOW (Deploy → Web App → copy URL)
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyzPy4XkST4mSXEkkHLrmz4i_TsFRftsahJPoTFKkG1TZkq3VbdIEo2bU2w0q5nWOl_/exec';
-
-async function fetchLiveCounts() {
-  if (!WEB_APP_URL || WEB_APP_URL === 'YOUR_WEB_APP_URL_HERE') return;
-  try {
-    const r = await fetch(WEB_APP_URL);
-    if (!r.ok) return;
-    const counts = await r.json();
-    // Overwrite localStorage with live counts from Google Sheets
-    const s = {};
-    for (const [actId, siteCounts] of Object.entries(counts)) {
-      s[actId] = {};
-      for (const [siteKey, count] of Object.entries(siteCounts)) {
-        s[actId][siteKey] = count;
-      }
-    }
-    svS(s);
-    updateKPIs();
-    document.getElementById('lastUpdated').textContent = new Date().toLocaleString() + ' (live)';
-  } catch(e) { console.warn('Live count fetch failed:', e); }
-}
-buildDash();buildCards();buildVolMatrix();
-fetchLiveCounts();
-setInterval(fetchLiveCounts, 60000); // refresh every 60s
-document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
-
-// ── Cancel form handling
-function toggleCancel(key) {
-  const cb  = document.getElementById('cancel-cb-'  + key);
-  const btn = document.getElementById('cancel-btn-' + key);
-  if (!cb || !btn) return;
-  btn.classList.toggle('visible', cb.checked);
-}
-
-function handleCancel(key, form) {
-  const cb    = document.getElementById('cancel-cb-' + key);
-  const email = document.getElementById('cancel-email-' + key);
-  if (!cb || !cb.checked) { alert('Please check the cancellation box to confirm.'); return; }
-  if (!email || !email.value) { alert('Please enter your email address.'); return; }
-
-  // POST cancellation directly to Apps Script Web App
-  if (WEB_APP_URL) {
-    const params = new URLSearchParams({activity: key, cancel: 'true', email: email.value});
-    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(()=>{});
-  }
-
-  setTimeout(() => {
-    document.getElementById('cancel-msg-' + key).style.display = 'block';
-    form.reset();
-    cb.checked = false;
-    document.getElementById('cancel-btn-' + key).classList.remove('visible');
-  }, 800);
-}
-
-</script>
-</body>
-</html>
+function chg(aId,s
