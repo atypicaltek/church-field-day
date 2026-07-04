@@ -1298,4 +1298,64 @@ function updateKPIs(){
   buildCards();buildVolMatrix();
   document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
 }
-function chg(aId,s
+function chg(aId,sk,val){setV(aId,sk,val);updateKPIs();}
+
+// ── Live dashboard counts from Apps Script web app
+// PASTE YOUR DEPLOYED WEB APP URL BELOW (Deploy → Web App → copy URL)
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyzPy4XkST4mSXEkkHLrmz4i_TsFRftsahJPoTFKkG1TZkq3VbdIEo2bU2w0q5nWOl_/exec';
+
+async function fetchLiveCounts() {
+  if (!WEB_APP_URL || WEB_APP_URL === 'YOUR_WEB_APP_URL_HERE') return;
+  try {
+    const r = await fetch(WEB_APP_URL);
+    if (!r.ok) return;
+    const counts = await r.json();
+    // Overwrite localStorage with live counts from Google Sheets
+    const s = {};
+    for (const [actId, siteCounts] of Object.entries(counts)) {
+      s[actId] = {};
+      for (const [siteKey, count] of Object.entries(siteCounts)) {
+        s[actId][siteKey] = count;
+      }
+    }
+    svS(s);
+    updateKPIs();
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleString() + ' (live)';
+  } catch(e) { console.warn('Live count fetch failed:', e); }
+}
+buildDash();buildCards();buildVolMatrix();
+fetchLiveCounts();
+setInterval(fetchLiveCounts, 60000); // refresh every 60s
+document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
+
+// ── Cancel form handling
+function toggleCancel(key) {
+  const cb  = document.getElementById('cancel-cb-'  + key);
+  const btn = document.getElementById('cancel-btn-' + key);
+  if (!cb || !btn) return;
+  btn.classList.toggle('visible', cb.checked);
+}
+
+function handleCancel(key, form) {
+  const cb    = document.getElementById('cancel-cb-' + key);
+  const email = document.getElementById('cancel-email-' + key);
+  if (!cb || !cb.checked) { alert('Please check the cancellation box to confirm.'); return; }
+  if (!email || !email.value) { alert('Please enter your email address.'); return; }
+
+  // POST cancellation directly to Apps Script Web App
+  if (WEB_APP_URL) {
+    const params = new URLSearchParams({activity: key, cancel: 'true', email: email.value});
+    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(()=>{});
+  }
+
+  setTimeout(() => {
+    document.getElementById('cancel-msg-' + key).style.display = 'block';
+    form.reset();
+    cb.checked = false;
+    document.getElementById('cancel-btn-' + key).classList.remove('visible');
+  }, 800);
+}
+
+</script>
+</body>
+</html>
