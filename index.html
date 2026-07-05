@@ -1090,7 +1090,7 @@ function showTab(id) {
 }
 
 // ── Form submission → Apps Script Web App (writes to sheet + sends email)
-function handleSubmit(key, form) {
+async function handleSubmit(key, form) {
   // Combine basketball player inputs into hidden textarea before sending
   if (key === 'basketball') {
     const players = [...form.querySelectorAll('.bball-player')]
@@ -1099,6 +1099,44 @@ function handleSubmit(key, form) {
     const combined = form.querySelector('#bball-players-combined');
     if (combined) combined.value = players;
   }
+
+  // Basketball: check for duplicate team name before submitting
+  if (key === 'basketball' && WEB_APP_URL) {
+    const teamInput = form.querySelector('[name="entry.471499084"]') ||
+      [...form.querySelectorAll('.form-group')].find(g => (g.querySelector('label')?.textContent||'').includes('Team Name'))?.querySelector('input');
+    // Find team name from form-group labels
+    let teamName = '';
+    form.querySelectorAll('.form-group').forEach(g => {
+      const lbl = (g.querySelector('label')?.textContent || '').trim();
+      if (/^Team Name/i.test(lbl)) {
+        teamName = g.querySelector('input')?.value?.trim() || '';
+      }
+    });
+    if (teamName) {
+      try {
+        const checkUrl = WEB_APP_URL.replace('/exec', '/exec') + '?check=teamname&name=' + encodeURIComponent(teamName);
+        const res = await fetch(checkUrl);
+        const data = await res.json();
+        if (data.exists) {
+          let errEl = document.getElementById('bball-name-error');
+          if (!errEl) {
+            errEl = document.createElement('div');
+            errEl.id = 'bball-name-error';
+            errEl.style.cssText = 'background:#fee2e2;border:1px solid #f87171;color:#b91c1c;padding:10px 14px;border-radius:6px;margin:8px 0;font-weight:600';
+            const teamGroup = [...form.querySelectorAll('.form-group')].find(g => /^Team Name/i.test((g.querySelector('label')?.textContent||'').trim()));
+            if (teamGroup) teamGroup.after(errEl);
+          }
+          errEl.textContent = '\u26a0\ufe0f Team name "' + teamName + '" is already registered. Please choose a different team name.';
+          errEl.style.display = 'block';
+          return false;
+        } else {
+          const errEl = document.getElementById('bball-name-error');
+          if (errEl) errEl.style.display = 'none';
+        }
+      } catch(e) { /* network error — allow submission to proceed */ }
+    }
+  }
+
   if (WEB_APP_URL) {
     const params = {activity: key};
     form.querySelectorAll('.form-group').forEach(g => {
