@@ -1479,4 +1479,226 @@ async function fetchLiveCounts() {
     for (const [actId, siteCounts] of Object.entries(counts)) {
       s[actId] = {};
       for (const [siteKey, count] of Object.entries(siteCounts)) {
-        s[actId][siteKey] = coun
+        s[actId][siteKey] = counts[siteKey];
+      }
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+    updateKPIs();
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+  } catch(e) { /* silently fail if offline */ }
+}
+fetchLiveCounts();
+setInterval(fetchLiveCounts, 300000);
+
+// ── Cancel signup → Apps Script
+function handleCancel(key, form) {
+  const cb    = document.getElementById('cancel-cb-' + key);
+  const email = document.getElementById('cancel-email-' + key);
+  if (!cb || !cb.checked) { alert('Please check the box to confirm cancellation.'); return; }
+  if (!email || !email.value) { alert('Please enter your email address.'); return; }
+  if (WEB_APP_URL) {
+    const params = new URLSearchParams({activity: key, cancel: 'true', email: email.value});
+    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(()=>{});
+  }
+  setTimeout(() => {
+    document.getElementById('cancel-msg-' + key).style.display = 'block';
+    form.reset();
+    cb.checked = false;
+    document.getElementById('cancel-btn-' + key).classList.remove('visible');
+  }, 800);
+}
+
+function toggleCancel(key) {
+  const cb  = document.getElementById('cancel-cb-' + key);
+  const btn = document.getElementById('cancel-btn-' + key);
+  if (cb && btn) btn.classList.toggle('visible', cb.checked);
+}
+
+// ══════════════════════════════════════════════════════
+// SITE LEADER CONTACTS
+// ══════════════════════════════════════════════════════
+const SITES = [
+  { id:'cathedral',  label:'The Cathedral' },
+  { id:'newbeg',     label:'New Beginnings' },
+  { id:'newport',    label:'Newport News' },
+  { id:'hampton',    label:'Downtown Hampton' },
+  { id:'kecoughtan', label:'Kecoughtan Road' },
+  { id:'ingleside',  label:'Ingleside Road' },
+  { id:'norfolk',    label:'Port Norfolk' },
+  { id:'franklin',   label:'Downtown Franklin' },
+];
+const ACTIVITIES = [
+  {key:'food',       label:'Food Station'},
+  {key:'drinks',     label:'Drinks'},
+  {key:'games',      label:'Games'},
+  {key:'dj',         label:'DJ / Music'},
+  {key:'karaoke',    label:'Karaoke / Live Performance'},
+  {key:'basketball', label:'Basketball Tournament'},
+  {key:'kidgames',   label:'Kid Games'},
+  {key:'parking',    label:'Parking'},
+  {key:'setup',      label:'Site Setup'},
+  {key:'popcorn',    label:'Popcorn Machine'},
+  {key:'pretzels',   label:'Pretzels'},
+];
+const DEFAULT_COORD = { kecoughtan: 'Alveta Davis' };
+const CONTACTS_KEY  = 'zuf_contacts_2026';
+
+function loadContactData()  { try { return JSON.parse(localStorage.getItem(CONTACTS_KEY)) || {}; } catch(e) { return {}; } }
+function saveContactData(d) { try { localStorage.setItem(CONTACTS_KEY, JSON.stringify(d)); } catch(e) {} }
+
+function buildContacts() {
+  const acc = document.getElementById('contacts-accordion');
+  if (!acc) return;
+  acc.innerHTML = '';
+  var stored = loadContactData();
+  SITES.forEach(function(site, si) {
+    var sData      = stored[site.id] || {};
+    var coordName  = sData.coord_name  !== undefined ? sData.coord_name  : (DEFAULT_COORD[site.id] || '');
+    var coordPhone = sData.coord_phone || '';
+    var coordEmail = sData.coord_email || '';
+
+    var block = document.createElement('div');
+    block.className = 'sl-site';
+    block.id = 'sl-' + site.id;
+
+    var hdr = document.createElement('div');
+    hdr.className = 'sl-header';
+    hdr.innerHTML = '<span class="sl-site-name">&#128205; ' + site.label + '</span><span class="sl-arrow">&#9660;</span>';
+    hdr.onclick = (function(id){ return function(){ toggleSite(id); }; })(site.id);
+    block.appendChild(hdr);
+
+    var body = document.createElement('div');
+    body.className = 'sl-body';
+    body.id = 'sl-body-' + site.id;
+
+    var actRows = '';
+    ACTIVITIES.forEach(function(act) {
+      var aData  = ((sData.activities || {})[act.key]) || {};
+      var aName  = aData.name  || '';
+      var aPhone = aData.phone || '';
+      var aEmail = aData.email || '';
+      actRows += '<tr>' +
+        '<td class="sl-act-label">' + act.label + '</td>' +
+        '<td><select onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'name\',this.value)">' + buildNameOptions(aName) + '</select></td>' +
+        '<td><input type="tel" placeholder="(757) 555-0000" value="' + aPhone + '" onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'phone\',this.value)"></td>' +
+        '<td><input type="email" placeholder="email@church.org" value="' + aEmail + '" onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'email\',this.value)"></td>' +
+        '</tr>';
+    });
+
+    body.innerHTML =
+      '<div class="sl-section-label">Site Coordinator</div>' +
+      '<div class="sl-coord-row">' +
+        '<div class="sl-field"><label>Name</label>' +
+        '<select onchange="saveField(\'' + site.id + '\',\'coord_name\',this.value)" id="sl-coord-name-' + site.id + '">' + buildNameOptions(coordName) + '</select></div>' +
+        '<div class="sl-field"><label>Phone</label>' +
+        '<input type="tel" placeholder="(757) 555-0000" value="' + coordPhone + '" onchange="saveField(\'' + site.id + '\',\'coord_phone\',this.value)"></div>' +
+        '<div class="sl-field"><label>Email</label>' +
+        '<input type="email" placeholder="email@church.org" value="' + coordEmail + '" onchange="saveField(\'' + site.id + '\',\'coord_email\',this.value)"></div>' +
+      '</div>' +
+      '<div class="sl-section-label" style="margin-top:16px">Activity Leaders</div>' +
+      '<table class="sl-act-table">' +
+        '<tr><th>Activity</th><th>Leader Name</th><th>Phone</th><th>Email</th></tr>' +
+        actRows +
+      '</table>';
+
+    block.appendChild(body);
+    acc.appendChild(block);
+    if (si === 0) { body.style.display = 'block'; hdr.querySelector('.sl-arrow').innerHTML = '&#9650;'; }
+  });
+}
+
+function buildNameOptions(selected) {
+  var names = ['— TBD —','Alveta Davis','[Name 1]','[Name 2]','[Name 3]','[Name 4]','[Name 5]','[Name 6]','[Name 7]','[Name 8]'];
+  var html = '';
+  var found = false;
+  names.forEach(function(n) {
+    var val = (n === '— TBD —') ? '' : n;
+    var sel = (val === selected || (selected === '' && n === '— TBD —')) ? ' selected' : '';
+    if (sel) found = true;
+    html += '<option value="' + val + '"' + sel + '>' + n + '</option>';
+  });
+  if (!found && selected) html += '<option value="' + selected + '" selected>' + selected + '</option>';
+  return html;
+}
+
+function toggleSite(id) {
+  var body  = document.getElementById('sl-body-' + id);
+  var arrow = document.querySelector('#sl-' + id + ' .sl-arrow');
+  var isOpen = body.style.display === 'block';
+  document.querySelectorAll('.sl-body').forEach(function(b){ b.style.display='none'; });
+  document.querySelectorAll('.sl-arrow').forEach(function(a){ a.innerHTML='&#9660;'; });
+  if (!isOpen) { body.style.display='block'; arrow.innerHTML='&#9650;'; }
+}
+
+function saveField(siteId, field, value) {
+  var d = loadContactData();
+  if (!d[siteId]) d[siteId] = {};
+  d[siteId][field] = value;
+  saveContactData(d);
+}
+
+function saveActivity(siteId, actKey, field, value) {
+  var d = loadContactData();
+  if (!d[siteId]) d[siteId] = {};
+  if (!d[siteId].activities) d[siteId].activities = {};
+  if (!d[siteId].activities[actKey]) d[siteId].activities[actKey] = {};
+  d[siteId].activities[actKey][field] = value;
+  saveContactData(d);
+}
+
+function resetContacts() {
+  if (!confirm('Reset all contacts to defaults? This cannot be undone.')) return;
+  try { localStorage.removeItem(CONTACTS_KEY); } catch(e) {}
+  buildContacts();
+}
+
+function exportContacts() {
+  var d = loadContactData();
+  var out = 'ZION UNITY FEST 2026 — SITE LEADER CONTACTS\n\n';
+  SITES.forEach(function(site) {
+    var sd   = d[site.id] || {};
+    var name = sd.coord_name || DEFAULT_COORD[site.id] || 'TBD';
+    out += '\n' + site.label.toUpperCase() + '\n';
+    out += '  Site Coordinator: ' + name + (sd.coord_phone?' | '+sd.coord_phone:'') + (sd.coord_email?' | '+sd.coord_email:'') + '\n';
+    ACTIVITIES.forEach(function(act) {
+      var a = ((sd.activities||{})[act.key])||{};
+      out += '  ' + act.label + ': ' + (a.name||'TBD') + (a.phone?' | '+a.phone:'') + (a.email?' | '+a.email:'') + '\n';
+    });
+  });
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(out).then(function(){ alert('Contact list copied!'); }).catch(function(){ prompt('Copy this:',out); });
+  } else { prompt('Copy this:', out); }
+}
+
+document.addEventListener('DOMContentLoaded', buildContacts);
+
+</script>
+
+<style>
+.sl-site{border:1px solid #dde3ed;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.sl-header{background:var(--navy);color:#fff;padding:14px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.sl-header:hover{background:#1e4a7a}
+.sl-site-name{font-weight:700;font-size:1rem}
+.sl-arrow{font-size:.85rem;opacity:.8}
+.sl-body{display:none;padding:18px 20px;background:#fff}
+.sl-section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);margin-bottom:8px}
+.sl-coord-row{display:grid;grid-template-columns:1.4fr 1fr 1.6fr;gap:10px;margin-bottom:4px}
+.sl-field label{display:block;font-size:.72rem;font-weight:600;color:#64748b;margin-bottom:3px;text-transform:uppercase}
+.sl-field select,.sl-field input{width:100%;padding:8px 10px;border:1.5px solid #dde3ed;border-radius:7px;font-size:.88rem;font-family:inherit;background:#f8fafc}
+.sl-field select:focus,.sl-field input:focus{outline:none;border-color:var(--navy);background:#fff}
+.sl-act-table{width:100%;border-collapse:collapse;font-size:.83rem}
+.sl-act-table th{background:#f1f5f9;color:var(--navy);font-weight:700;padding:7px 10px;text-align:left;border-bottom:2px solid #dde3ed}
+.sl-act-table td{padding:5px 8px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.sl-act-table tr:last-child td{border-bottom:none}
+.sl-act-table tr:hover td{background:#f8fafc}
+.sl-act-label{font-weight:600;color:#1e293b;white-space:nowrap;min-width:140px}
+.sl-act-table select,.sl-act-table input[type="tel"],.sl-act-table input[type="email"]{width:100%;padding:5px 8px;border:1px solid #dde3ed;border-radius:6px;font-size:.82rem;font-family:inherit;background:#f8fafc}
+.sl-act-table select:focus,.sl-act-table input:focus{outline:none;border-color:var(--navy);background:#fff}
+@media(max-width:640px){
+  .sl-coord-row{grid-template-columns:1fr}
+  .sl-act-table th:nth-child(3),.sl-act-table th:nth-child(4),
+  .sl-act-table td:nth-child(3),.sl-act-table td:nth-child(4){display:none}
+}
+</style>
+</body>
+</html>
