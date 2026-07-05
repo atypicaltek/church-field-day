@@ -225,6 +225,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   <button class="tab-btn" onclick="showTab('popcorn')">🍿 Popcorn</button>
   <button class="tab-btn" onclick="showTab('pretzels')">🥨 Pretzels</button>
   <button class="tab-btn" onclick="showTab('contacts')">📍 Site Leaders</button>
+  <button class="tab-btn" onclick="showTab('choir')">🎶 Combined Choir</button>
 </div>
 
 <main>
@@ -1093,13 +1094,99 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 </div>
 </div><!-- /tab-contacts -->
 
+<div id="tab-choir" class="form-panel">
+  <span class="back-link" onclick="showTab('home')">← Back to Home</span>
+  <div class="act-header">
+    <span class="act-icon">🎶</span>
+    <div>
+      <h2 class="act-title">Combined Choir Signup</h2>
+      <p class="act-desc">Join the Zion Unity Fest Combined Choir! Singers from all 8 sites come together for a powerful worship experience.</p>
+    </div>
+  </div>
+  <div class="form-box">
+    <form id="choir-form" onsubmit="handleChoirSubmit(this,event)">
+      <div class="field-group">
+        <label class="field-label">Which site are you from? <span class="req">*</span></label>
+        <select name="site" required class="field-input">
+          <option value="">— Select your site —</option>
+          <option>The Cathedral</option>
+          <option>New Beginnings</option>
+          <option>Newport News</option>
+          <option>Downtown Hampton</option>
+          <option>Kecoughtan Road</option>
+          <option>Ingleside Road</option>
+          <option>Port Norfolk</option>
+          <option>Downtown Franklin</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Singer Name <span class="req">*</span></label>
+        <input type="text" name="name" required class="field-input" placeholder="Full name">
+      </div>
+      <div class="field-group two-col">
+        <div>
+          <label class="field-label">Phone Number <span class="req">*</span></label>
+          <input type="tel" name="phone" required class="field-input" placeholder="(757) 555-0000">
+        </div>
+        <div>
+          <label class="field-label">Email Address <span class="req">*</span></label>
+          <input type="email" name="email" required class="field-input" placeholder="your@email.com">
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Voice Part <span class="req">*</span></label>
+        <select name="voicePart" required class="field-input">
+          <option value="">— Select your voice part —</option>
+          <option>Soprano</option>
+          <option>Mezzo-Soprano</option>
+          <option>Alto</option>
+          <option>Tenor</option>
+          <option>Baritone</option>
+          <option>Bass</option>
+          <option>Not Sure</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Are you willing to lead a song? <span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-lbl"><input type="radio" name="willLead" value="Yes" required> Yes</label>
+          <label class="radio-lbl"><input type="radio" name="willLead" value="No"> No</label>
+          <label class="radio-lbl"><input type="radio" name="willLead" value="Maybe"> Maybe / Open to it</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Available for rehearsal? <span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-lbl"><input type="radio" name="rehearsalAvail" value="Yes" required> Yes</label>
+          <label class="radio-lbl"><input type="radio" name="rehearsalAvail" value="No"> No</label>
+          <label class="radio-lbl"><input type="radio" name="rehearsalAvail" value="Maybe"> Depends on schedule</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Rehearsal availability details <span style="color:#999;font-weight:400">(days/times that work best)</span></label>
+        <input type="text" name="rehearsalNotes" class="field-input" placeholder="e.g., Saturdays after 3pm, or Sunday evenings">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Additional comments or questions <span style="color:#999;font-weight:400">(optional)</span></label>
+        <textarea name="comments" class="field-input" rows="3" placeholder="Anything else you'd like the choir director to know..."></textarea>
+      </div>
+      <div style="margin-top:10px">
+        <button type="submit" class="submit-btn">🎶 Submit Choir Signup</button>
+      </div>
+      <div id="choir-success" style="display:none;margin-top:18px;padding:16px;background:#e8f5e9;border-radius:10px;color:#2e7d32;font-weight:600;text-align:center">
+        ✅ You're signed up! Thank you for joining the Combined Choir. Watch your email for rehearsal details.
+      </div>
+    </form>
+  </div>
+</div><!-- /tab-choir -->
+
 </main>
 
 <footer>Zion Community Unity Fest &nbsp;·&nbsp; 8 Sites &nbsp;·&nbsp; 11 Activities &nbsp;·&nbsp; All signups managed by Registration Lead</footer>
 
 <script>
 // ── Tab navigation
-const TAB_MAP = {'home':0,'matrix':1,'food':2,'drinks':3,'games':4,'dj':5,'karaoke':6,'basketball':7,'kidgames':8,'parking':9,'setup':10,'popcorn':11,'pretzels':12,'contacts':13};
+const TAB_MAP = {'home':0,'matrix':1,'food':2,'drinks':3,'games':4,'dj':5,'karaoke':6,'basketball':7,'kidgames':8,'parking':9,'setup':10,'popcorn':11,'pretzels':12,'contacts':13,'choir':14};
 function showTab(id) {
   document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -1550,6 +1637,7 @@ function buildContacts() {
   const acc = document.getElementById('contacts-accordion');
   if (!acc) return;
   acc.innerHTML = '';
+  ensureNameDatalist();
   var stored = loadContactData();
   SITES.forEach(function(site, si) {
     var sData      = stored[site.id] || {};
@@ -1579,7 +1667,7 @@ function buildContacts() {
       var aEmail = aData.email || '';
       actRows += '<tr>' +
         '<td class="sl-act-label">' + act.label + '</td>' +
-        '<td><select onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'name\',this.value)">' + buildNameOptions(aName) + '</select></td>' +
+        '<td><input type="text" list="sl-names" placeholder="Select or type name" value="' + aName + '" onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'name\',this.value)" oninput="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'name\',this.value)"></td>' +
         '<td><input type="tel" placeholder="(757) 555-0000" value="' + aPhone + '" onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'phone\',this.value)"></td>' +
         '<td><input type="email" placeholder="email@church.org" value="' + aEmail + '" onchange="saveActivity(\'' + site.id + '\',\'' + act.key + '\',\'email\',this.value)"></td>' +
         '</tr>';
@@ -1589,7 +1677,7 @@ function buildContacts() {
       '<div class="sl-section-label">Site Coordinator</div>' +
       '<div class="sl-coord-row">' +
         '<div class="sl-field"><label>Name</label>' +
-        '<select onchange="saveField(\'' + site.id + '\',\'coord_name\',this.value)" id="sl-coord-name-' + site.id + '">' + buildNameOptions(coordName) + '</select></div>' +
+        '<input type="text" list="sl-names" placeholder="Select or type name" value="' + coordName + '" id="sl-coord-name-' + site.id + '" onchange="saveField(\'' + site.id + '\',\'coord_name\',this.value)" oninput="saveField(\'' + site.id + '\',\'coord_name\',this.value)"></div>' +
         '<div class="sl-field"><label>Phone</label>' +
         '<input type="tel" placeholder="(757) 555-0000" value="' + coordPhone + '" onchange="saveField(\'' + site.id + '\',\'coord_phone\',this.value)"></div>' +
         '<div class="sl-field"><label>Email</label>' +
@@ -1607,18 +1695,18 @@ function buildContacts() {
   });
 }
 
-function buildNameOptions(selected) {
-  var names = ['— TBD —','Alveta Davis','[Name 1]','[Name 2]','[Name 3]','[Name 4]','[Name 5]','[Name 6]','[Name 7]','[Name 8]'];
-  var html = '';
-  var found = false;
-  names.forEach(function(n) {
-    var val = (n === '— TBD —') ? '' : n;
-    var sel = (val === selected || (selected === '' && n === '— TBD —')) ? ' selected' : '';
-    if (sel) found = true;
-    html += '<option value="' + val + '"' + sel + '>' + n + '</option>';
+var SL_NAME_SUGGESTIONS = ['Alveta Davis','[Placeholder Name 1]','[Placeholder Name 2]','[Placeholder Name 3]','[Placeholder Name 4]','[Placeholder Name 5]','[Placeholder Name 6]','[Placeholder Name 7]','[Placeholder Name 8]'];
+
+function ensureNameDatalist() {
+  if (document.getElementById('sl-names')) return;
+  var dl = document.createElement('datalist');
+  dl.id = 'sl-names';
+  SL_NAME_SUGGESTIONS.forEach(function(n) {
+    var opt = document.createElement('option');
+    opt.value = n;
+    dl.appendChild(opt);
   });
-  if (!found && selected) html += '<option value="' + selected + '" selected>' + selected + '</option>';
-  return html;
+  document.body.appendChild(dl);
 }
 
 function toggleSite(id) {
@@ -1672,6 +1760,34 @@ function exportContacts() {
 
 document.addEventListener('DOMContentLoaded', buildContacts);
 
+// ── Combined Choir signup handler
+function handleChoirSubmit(form, event) {
+  event.preventDefault();
+  var data = new FormData(form);
+  var params = new URLSearchParams({
+    activity: 'choir',
+    site:           data.get('site')          || '',
+    name:           data.get('name')          || '',
+    phone:          data.get('phone')         || '',
+    email:          data.get('email')         || '',
+    voicePart:      data.get('voicePart')     || '',
+    willLead:       data.get('willLead')      || '',
+    rehearsalAvail: data.get('rehearsalAvail')|| '',
+    rehearsalNotes: data.get('rehearsalNotes')|| '',
+    comments:       data.get('comments')      || ''
+  });
+  if (WEB_APP_URL) {
+    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(function(){});
+  }
+  setTimeout(function() {
+    document.getElementById('choir-success').style.display = 'block';
+    form.reset();
+    window.scrollTo({top: document.getElementById('choir-success').offsetTop - 100, behavior:'smooth'});
+  }, 600);
+  return false;
+}
+
+
 </script>
 
 <style>
@@ -1695,10 +1811,4 @@ document.addEventListener('DOMContentLoaded', buildContacts);
 .sl-act-table select,.sl-act-table input[type="tel"],.sl-act-table input[type="email"]{width:100%;padding:5px 8px;border:1px solid #dde3ed;border-radius:6px;font-size:.82rem;font-family:inherit;background:#f8fafc}
 .sl-act-table select:focus,.sl-act-table input:focus{outline:none;border-color:var(--navy);background:#fff}
 @media(max-width:640px){
-  .sl-coord-row{grid-template-columns:1fr}
-  .sl-act-table th:nth-child(3),.sl-act-table th:nth-child(4),
-  .sl-act-table td:nth-child(3),.sl-act-table td:nth-child(4){display:none}
-}
-</style>
-</body>
-</html>
+ 
