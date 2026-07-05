@@ -224,6 +224,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   <button class="tab-btn" onclick="showTab('setup')">🔧 Site Setup</button>
   <button class="tab-btn" onclick="showTab('popcorn')">🍿 Popcorn</button>
   <button class="tab-btn" onclick="showTab('pretzels')">🥨 Pretzels</button>
+  <button class="tab-btn" onclick="showTab('contacts')">📍 Site Leaders</button>
 </div>
 
 <main>
@@ -1073,13 +1074,32 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 
 </div>
 
+<!-- ══════════ SITE LEADER CONTACTS TAB ══════════ -->
+<div id="tab-contacts" class="form-panel">
+<span class="back-link" onclick="showTab('home')">← Back to QR Codes</span>
+<div class="form-wrap" style="max-width:860px">
+  <h2 style="color:var(--navy);margin-bottom:4px">📍 Site Leader Contacts</h2>
+  <p style="color:#666;font-size:.88rem;margin-bottom:6px">Zion Unity Fest · Saturday, October 4, 2026 · 8 Sites · 11 Activities</p>
+  <p style="background:#fff8e1;border-left:3px solid var(--gold);padding:8px 12px;border-radius:6px;font-size:.8rem;color:#7a5c00;margin-bottom:18px">
+    <strong>Template Mode:</strong> Click any name field to select or update it. Changes save automatically in your browser. Reset to defaults anytime using the button below.
+  </p>
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+    <button onclick="resetContacts()" style="background:#fff;border:1px solid #ccc;border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;color:#555">🔄 Reset All to Default</button>
+    <button onclick="exportContacts()" style="background:var(--navy);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:.78rem;cursor:pointer;font-weight:600">📋 Copy Contact List</button>
+  </div>
+
+  <!-- Site accordion blocks injected by JS -->
+  <div id="contacts-accordion"></div>
+</div>
+</div><!-- /tab-contacts -->
+
 </main>
 
 <footer>Zion Community Unity Fest &nbsp;·&nbsp; 8 Sites &nbsp;·&nbsp; 11 Activities &nbsp;·&nbsp; All signups managed by Registration Lead</footer>
 
 <script>
 // ── Tab navigation
-const TAB_MAP = {'home':0,'matrix':1,'food':2,'drinks':3,'games':4,'dj':5,'karaoke':6,'basketball':7,'kidgames':8,'parking':9,'setup':10,'popcorn':11,'pretzels':12};
+const TAB_MAP = {'home':0,'matrix':1,'food':2,'drinks':3,'games':4,'dj':5,'karaoke':6,'basketball':7,'kidgames':8,'parking':9,'setup':10,'popcorn':11,'pretzels':12,'contacts':13};
 function showTab(id) {
   document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -1459,47 +1479,4 @@ async function fetchLiveCounts() {
     for (const [actId, siteCounts] of Object.entries(counts)) {
       s[actId] = {};
       for (const [siteKey, count] of Object.entries(siteCounts)) {
-        s[actId][siteKey] = count;
-      }
-    }
-    svS(s);
-    updateKPIs();
-    document.getElementById('lastUpdated').textContent = new Date().toLocaleString() + ' (live)';
-  } catch(e) { console.warn('Live count fetch failed:', e); }
-}
-buildDash();buildCards();buildVolMatrix();
-fetchLiveCounts();
-setInterval(fetchLiveCounts, 60000); // refresh every 60s
-document.getElementById('lastUpdated').textContent=new Date().toLocaleString();
-
-// ── Cancel form handling
-function toggleCancel(key) {
-  const cb  = document.getElementById('cancel-cb-'  + key);
-  const btn = document.getElementById('cancel-btn-' + key);
-  if (!cb || !btn) return;
-  btn.classList.toggle('visible', cb.checked);
-}
-
-function handleCancel(key, form) {
-  const cb    = document.getElementById('cancel-cb-' + key);
-  const email = document.getElementById('cancel-email-' + key);
-  if (!cb || !cb.checked) { alert('Please check the cancellation box to confirm.'); return; }
-  if (!email || !email.value) { alert('Please enter your email address.'); return; }
-
-  // POST cancellation directly to Apps Script Web App
-  if (WEB_APP_URL) {
-    const params = new URLSearchParams({activity: key, cancel: 'true', email: email.value});
-    fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: params}).catch(()=>{});
-  }
-
-  setTimeout(() => {
-    document.getElementById('cancel-msg-' + key).style.display = 'block';
-    form.reset();
-    cb.checked = false;
-    document.getElementById('cancel-btn-' + key).classList.remove('visible');
-  }, 800);
-}
-
-</script>
-</body>
-</html>
+        s[actId][siteKey] = coun
