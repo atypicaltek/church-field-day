@@ -1382,7 +1382,8 @@ const QR_ACTS = [
   {id:"parking", label:"🅿️ Parking", url:"https://docs.google.com/forms/u/0/d/e/1FAIpQLSfVB180paDOzl4PTwhdnuwoefXKcN5IeYk4ZWldmstGjkmxWQ/viewform", tab:"parking"},
   {id:"setup", label:"🔧 Site Setup", url:"https://docs.google.com/forms/u/0/d/e/1FAIpQLSd-AaYRQEDxPCSNOTBer37-KbID6xknMtYjB5U8K8baBmqnQg/viewform", tab:"setup"},
   {id:"popcorn", label:"🍿 Popcorn Machine", url:"https://docs.google.com/forms/u/0/d/e/1FAIpQLSfY7GOfBwgnUuyUXYz2w9lo91OdtPUn3ZgRqebK_O6mxHpZZw/viewform", tab:"popcorn"},
-  {id:"pretzels", label:"🥨 Pretzels", url:"https://docs.google.com/forms/u/0/d/e/1FAIpQLSeVtize5MRV1v_YxI5wF-2q_rGnxKkiOgb0LAIU_yZuY9nvng/viewform", tab:"pretzels"}
+  {id:"pretzels", label:"🥨 Pretzels", url:"https://docs.google.com/forms/u/0/d/e/1FAIpQLSeVtize5MRV1v_YxI5wF-2q_rGnxKkiOgb0LAIU_yZuY9nvng/viewform", tab:"pretzels"},
+  {id:"choir", label:"🎶 Combined Choir", url:"https://atypicaltek.github.io/ZCCUnityFest/#choir", tab:"choir"}
 ];
 const grid = document.getElementById('qr-grid');
 QR_ACTS.forEach(act => {
@@ -1787,6 +1788,14 @@ function handleChoirSubmit(form, event) {
   return false;
 }
 
+
+// Auto-navigate to tab from URL hash (e.g. #choir from QR code scan)
+(function(){
+  const hash = window.location.hash.replace('#','');
+  if (hash && document.getElementById('tab-'+hash)) {
+    setTimeout(function(){ showTab(hash); }, 100);
+  }
+})();
 
 </script>
 
