@@ -1092,7 +1092,6 @@ function showTab(id) {
 // ── Form submission → Apps Script Web App (writes to sheet + sends email)
 function handleSubmit(key, form, event) {
   if (key === 'basketball') {
-    // Prevent default immediately so async check can control submission
     if (event) event.preventDefault();
     handleBasketballSubmit(form);
     return false;
@@ -1119,50 +1118,114 @@ function handleSubmit(key, form, event) {
 
 async function handleBasketballSubmit(form) {
   // Combine player inputs into hidden textarea
+  const combined = form.querySelector('#bball-players-combined');
   const players = [...form.querySelectorAll('.bball-player')]
     .map((inp, i) => inp.value.trim() ? (i+1) + '. ' + inp.value.trim() : '')
     .filter(Boolean).join('\n');
-  const combined = form.querySelector('#bball-players-combined');
   if (combined) combined.value = players;
 
-  // Get team name
-  let teamName = '';
+  // Read field values
+  let teamName = '', jerseyColor = '', altColor = '';
   form.querySelectorAll('.form-group').forEach(g => {
-    const lbl = (g.querySelector('label')?.textContent || '').trim();
-    if (/^Team Name/i.test(lbl)) teamName = g.querySelector('input')?.value?.trim() || '';
+    const lbl = (g.querySelector('label')?.textContent || '').replace(/\s*\*.*/, '').trim();
+    const inp = g.querySelector('input:not(.bball-player), select, textarea');
+    if (!inp) return;
+    if (/^Team Name$/i.test(lbl))              teamName    = inp.value.trim();
+    if (/^Jersey Color Preference$/i.test(lbl)) jerseyColor = inp.value.trim();
+    if (/^Alternate Jersey Color$/i.test(lbl))  altColor    = inp.value.trim();
   });
 
-  // Find or create error element
-  function showError(msg) {
-    let errEl = document.getElementById('bball-name-error');
-    if (!errEl) {
-      errEl = document.createElement('div');
-      errEl.id = 'bball-name-error';
-      errEl.style.cssText = 'background:#fee2e2;border:1px solid #f87171;color:#b91c1c;padding:10px 14px;border-radius:6px;margin:8px 0;font-weight:600';
-      const teamGroup = [...form.querySelectorAll('.form-group')].find(g => /^Team Name/i.test((g.querySelector('label')?.textContent||'').trim()));
-      if (teamGroup) teamGroup.after(errEl);
-      else form.prepend(errEl);
+  // Error display helper
+  function getOrCreateError(id, afterEl) {
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = id;
+      el.style.cssText = 'background:#fee2e2;border-left:4px solid #dc2626;color:#b91c1c;' +
+        'padding:10px 14px;border-radius:6px;margin:6px 0 10px;font-weight:600;font-size:.93rem';
+      if (afterEl) afterEl.after(el); else form.prepend(el);
     }
-    errEl.textContent = msg;
-    errEl.style.display = 'block';
+    return el;
   }
-  function clearError() {
-    const errEl = document.getElementById('bball-name-error');
-    if (errEl) errEl.style.display = 'none';
+  function hide(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+  // Find form groups for positioning errors
+  const teamGroup  = [...form.querySelectorAll('.form-group')].find(g => /^Team Name$/i.test((g.querySelector('label')?.textContent||'').replace(/\s*\*.*/,''). trim()));
+  const colorGroup = [...form.querySelectorAll('.form-group')].find(g => /^Jersey Color Preference$/i.test((g.querySelector('label')?.textContent||'').replace(/\s*\*.*/,'').trim()));
+
+  // --- Check sheet for duplicates ---
+  let teamExists = false, colorExists = false, checkFailed = false;
+
+  if (WEB_APP_URL && (teamName || jerseyColor)) {
+    try {
+      const url = WEB_APP_URL
+        + '?check=basketball'
+        + '&team='  + encodeURIComponent(teamName)
+        + '&color=' + encodeURIComponent(jerseyColor);
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      teamExists  = !!data.teamExists;
+      colorExists = !!data.colorExists;
+    } catch(e) {
+      checkFailed = true;
+      console.warn('Duplicate check failed:', e);
+    }
   }
 
-  // Check for duplicate team name
-  if (teamName && WEB_APP_URL) {
-    try {
-      const res = await fetch(WEB_APP_URL + '?check=teamname&name=' + encodeURIComponent(teamName));
-      const data = await res.json();
-      if (data.exists) {
-        showError('\u26a0\ufe0f Team name "' + teamName + '" is already registered. Please choose a different team name.');
-        return; // Block submission
-      }
-    } catch(e) { /* network error — allow through */ }
+  // Build and show errors; return if any blocking issues
+  let hasError = false;
+
+  if (teamExists) {
+    const err = getOrCreateError('bball-team-error', teamGroup);
+    err.innerHTML = '\u26a0\ufe0f <strong>Team name already registered:</strong> "' + teamName +
+      '" is taken. Please enter a different team name and resubmit.';
+    err.style.display = 'block';
+    hasError = true;
+  } else {
+    hide('bball-team-error');
   }
-  clearError();
+
+  if (colorExists) {
+    if (!altColor) {
+      // No alternate provided — hard block
+      const err = getOrCreateError('bball-color-error', colorGroup);
+      err.innerHTML = '\u26a0\ufe0f <strong>Jersey color already taken:</strong> "' + jerseyColor +
+        '" is in use. Please enter a different color, or add an Alternate Jersey Color and resubmit.';
+      err.style.display = 'block';
+      hasError = true;
+    } else {
+      // Alternate provided — check if alternate is also taken
+      let altExists = false;
+      try {
+        const res2 = await fetch(WEB_APP_URL + '?check=basketball&team=__none__&color=' + encodeURIComponent(altColor));
+        const d2   = await res2.json();
+        altExists  = !!d2.colorExists;
+      } catch(e) {}
+
+      if (altExists) {
+        const err = getOrCreateError('bball-color-error', colorGroup);
+        err.innerHTML = '\u26a0\ufe0f <strong>Both colors are taken:</strong> "' + jerseyColor +
+          '" and "' + altColor + '" are already in use. Please choose a different color and resubmit.';
+        err.style.display = 'block';
+        hasError = true;
+      } else {
+        // Alternate is available — show info, don't block
+        const err = getOrCreateError('bball-color-error', colorGroup);
+        err.style.cssText = 'background:#fef9c3;border-left:4px solid #ca8a04;color:#854d0e;' +
+          'padding:10px 14px;border-radius:6px;margin:6px 0 10px;font-weight:600;font-size:.93rem';
+        err.innerHTML = '\u2139\ufe0f "' + jerseyColor + '" is taken \u2014 your alternate color "' + altColor + '" will be assigned instead.';
+        err.style.display = 'block';
+        // Not blocking — server will assign alternate
+      }
+    }
+  } else {
+    hide('bball-color-error');
+  }
+
+  if (hasError) return; // Stop — user must fix and resubmit
+
+  hide('bball-color-error');
 
   // All clear — send to Apps Script
   if (WEB_APP_URL) {
@@ -1181,7 +1244,9 @@ async function handleBasketballSubmit(form) {
   }
   setTimeout(() => {
     const msg = document.getElementById('success-basketball');
-    if (msg) { msg.style.display='block'; form.reset(); }
+    if (msg) { msg.style.display = 'block'; form.reset(); }
+    hide('bball-team-error');
+    hide('bball-color-error');
   }, 800);
 }
 
