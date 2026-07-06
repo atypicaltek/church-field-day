@@ -195,7 +195,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   <!-- Stats bar -->
   <div class="dash-statsbar">
     <div class="dash-stat"><div class="dash-stat-num" id="stat-total">--</div><div class="dash-stat-lbl">Total Signed Up</div></div>
-    <div class="dash-stat"><div class="dash-stat-num">159</div><div class="dash-stat-lbl">Volunteers Needed</div></div>
+    <div class="dash-stat"><div class="dash-stat-num" id="stat-needed">--</div><div class="dash-stat-lbl">Volunteers Needed</div></div>
     <div class="dash-stat"><div class="dash-stat-num">8</div><div class="dash-stat-lbl">Sites</div></div>
     <div class="dash-stat"><div class="dash-stat-num">13</div><div class="dash-stat-lbl">Categories</div></div>
     <div class="dash-stat" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px">
@@ -629,8 +629,17 @@ function renderDash(data) {
   renderActOverview();
   renderSitesOverview(data);
   updateQRCounts();
+  // Total active signups
   var total = DASH_ACTS.reduce(function(s,a){ return s+(LIVE_COUNTS[a.key]||0); }, 0);
-  var el = document.getElementById('stat-total'); if (el) el.textContent = total;
+  var elT = document.getElementById('stat-total'); if (elT) elT.textContent = total;
+  // Total volunteers needed (requirement total minus active signups)
+  var totalNeeded = 0;
+  DASH_ACTS.forEach(function(a){
+    var req = REQUIREMENTS[a.key] || {};
+    totalNeeded += Object.values(req).reduce(function(s,v){ return s+v; }, 0);
+  });
+  var remaining = Math.max(0, totalNeeded - total);
+  var elN = document.getElementById('stat-needed'); if (elN) elN.textContent = remaining;
   var upd = document.getElementById('stat-updated'); if (upd) upd.textContent = new Date().toLocaleTimeString();
 }
 
@@ -873,31 +882,82 @@ window.addEventListener('load', function() {
   setInterval(loadDash, 120000);
 
 
-  // ── Status banner from cancel/update redirect ──
+  // ── Cancel / Update token handling + status banner ──
   (function() {
     var params = new URLSearchParams(window.location.search);
-    var msg = params.get('msg');
-    if (!msg) return;
-    var banner = document.getElementById('status-banner');
-    var msgEl  = document.getElementById('status-msg');
-    if (msg === 'cancelled') {
-      var who = decodeURIComponent(params.get('who') || '');
-      msgEl.textContent = (who ? who + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.';
-      banner.className = 'status-banner cancelled';
-    } else if (msg === 'update') {
-      var who   = decodeURIComponent(params.get('who') || '');
-      var act   = decodeURIComponent(params.get('act') || 'your signup');
-      var clink = decodeURIComponent(params.get('clink') || '');
-      msgEl.innerHTML = (who ? '<strong>' + who + '</strong>: ' : '') +
-        'To update your <strong>' + act + '</strong> signup \u2014 ' +
-        (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register.' : 'cancel your current signup then re-register.');
-      banner.className = 'status-banner update';
-    } else if (msg === 'invalid') {
-      msgEl.textContent = 'This link is invalid or has already been used.';
-      banner.className = 'status-banner invalid';
+    var cancelToken = params.get('cancel');
+    var updateToken = params.get('update');
+    var msg         = params.get('msg');
+
+    function showBanner(text, cls, isHtml) {
+      var banner = document.getElementById('status-banner');
+      var msgEl  = document.getElementById('status-msg');
+      if (!banner || !msgEl) return;
+      if (isHtml) msgEl.innerHTML = text; else msgEl.textContent = text;
+      banner.className = 'status-banner ' + cls;
+      banner.style.display = 'block';
+      setTimeout(function(){ banner.style.display='none'; }, 15000);
     }
-    banner.style.display = 'block';
-    setTimeout(function(){ banner.style.display='none'; }, 15000);
+
+    // Handle ?cancel=TOKEN — call Apps Script via JSONP
+    if (cancelToken) {
+      showBanner('Processing cancellation...', 'update');
+      var cbName = 'zufCancel_' + Date.now();
+      window[cbName] = function(data) {
+        delete window[cbName];
+        if (data.ok) {
+          showBanner((data.name ? data.name + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.', 'cancelled');
+          loadDash();
+        } else {
+          showBanner('This cancellation link is invalid or has already been used.', 'invalid');
+        }
+        // Clean URL
+        history.replaceState({}, '', window.location.pathname);
+      };
+      var s = document.createElement('script');
+      s.src = WEB_APP_URL + '?action=cancel&token=' + encodeURIComponent(cancelToken) + '&callback=' + cbName;
+      document.head.appendChild(s);
+    }
+
+    // Handle ?update=TOKEN — call Apps Script via JSONP
+    else if (updateToken) {
+      showBanner('Loading update options...', 'update');
+      var cbName2 = 'zufUpdate_' + Date.now();
+      window[cbName2] = function(data) {
+        delete window[cbName2];
+        if (data.ok) {
+          var who = data.name ? '<strong>' + data.name + '</strong>: ' : '';
+          var act = data.activity || 'your signup';
+          var clink = data.cancelUrl || '';
+          showBanner(who + 'To update your <strong>' + act + '</strong> signup &#8212; ' +
+            (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register below.' : 'cancel your current signup then re-register.'),
+            'update', true);
+        } else {
+          showBanner('This update link is invalid or has already been used.', 'invalid');
+        }
+        history.replaceState({}, '', window.location.pathname);
+      };
+      var s2 = document.createElement('script');
+      s2.src = WEB_APP_URL + '?action=update&token=' + encodeURIComponent(updateToken) + '&callback=' + cbName2;
+      document.head.appendChild(s2);
+    }
+
+    // Handle ?msg=xxx (redirect-based fallback)
+    else if (msg) {
+      var who  = decodeURIComponent(params.get('who') || '');
+      var act  = decodeURIComponent(params.get('act') || 'your signup');
+      var clink = decodeURIComponent(params.get('clink') || '');
+      if (msg === 'cancelled') {
+        showBanner((who ? who + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.', 'cancelled');
+      } else if (msg === 'update') {
+        var txt = (who ? '<strong>' + who + '</strong>: ' : '') + 'To update your <strong>' + act + '</strong> signup &#8212; ' +
+          (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register.' : 'cancel then re-register.');
+        showBanner(txt, 'update', true);
+      } else if (msg === 'invalid') {
+        showBanner('This link is invalid or has already been used.', 'invalid');
+      }
+      history.replaceState({}, '', window.location.pathname);
+    }
   })();
 
   // Matrix unlock
