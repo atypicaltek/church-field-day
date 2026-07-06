@@ -26,8 +26,9 @@ header span{font-size:1rem;opacity:.75}
 .tab-btn.coord-btn{background:rgba(123,0,0,.5)}
 .tab-btn.coord-btn.active{background:var(--coord);color:#fff}
 main{max-width:100%;margin:0;padding:28px 24px}
-#tab-home{max-width:100%}
-#tab-matrix,#tab-f1,#tab-f2,#tab-f3,#tab-f4,#tab-f5,#tab-f6,#tab-f7,#tab-f8,#tab-f9,#tab-f10,#tab-f11,#tab-f12,#tab-f13{max-width:900px;margin:0 auto}
+#tab-home{max-width:100%;text-align:center}
+#tab-matrix{max-width:100%;margin:0}
+#tab-f1,#tab-f2,#tab-f3,#tab-f4,#tab-f5,#tab-f6,#tab-f7,#tab-f8,#tab-f9,#tab-f10,#tab-f11,#tab-f12,#tab-f13{max-width:900px;margin:0 auto}
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-top:8px}
 .qr-card{background:#fff;border-radius:12px;padding:20px 16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.10);cursor:pointer;border:2px solid transparent;transition:.2s}
 .qr-card:hover{border-color:var(--gold);transform:translateY(-2px)}
@@ -73,15 +74,22 @@ textarea{resize:vertical;min-height:80px}
 .req-badge.med{background:var(--blue);color:#fff}
 .req-badge.choir-badge{background:var(--choir);color:#fff}
 .req-badge.coord-badge{background:var(--coord);color:#fff}
-.matrix-section{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.10);overflow-x:auto}
-.matrix-table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:700px}
-.matrix-table th{background:var(--blue);color:#fff;padding:8px 10px;text-align:center}
+.matrix-section{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.10);overflow-x:visible}
+.matrix-table{width:100%;border-collapse:collapse;font-size:.95rem;table-layout:fixed}
+.matrix-table th{background:var(--blue);color:#fff;padding:12px 8px;text-align:center;word-wrap:break-word}
 .matrix-table th:first-child{text-align:left;min-width:130px}
-.matrix-table td{padding:7px 10px;border:1px solid #dde;text-align:center}
+.matrix-table td{padding:10px 8px;border:1px solid #dde;text-align:center}
 .matrix-table tr:nth-child(even) td{background:#f8f9fd}
 .matrix-table td:first-child{text-align:left;font-weight:600;color:var(--navy)}
 .cathedral{background:var(--navy)!important;color:#fff!important}
-.kecoughtan{background:var(--blue)!important;color:#fff!important}
+.kecoughtan{background:#4CAF50!important;color:#fff!important}
+.newbeg{background:#1565C0!important;color:#fff!important}
+.newport{background:#6D4C41!important;color:#fff!important}
+.hampton{background:#7CB342!important;color:#fff!important}
+.ingleside{background:#E65100!important;color:#fff!important}
+.norfolk{background:#C62828!important;color:#fff!important}
+.franklin{background:#2E7D32!important;color:#fff!important}
+
 .total-col{background:var(--gold-light)!important;font-weight:700;color:var(--navy)!important}
 .total-row td{background:var(--navy)!important;color:#fff!important;font-weight:700}
 .info-banner{background:linear-gradient(135deg,#e8f4fd,#f0f8ff);border:1px solid var(--blue);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.88rem;color:var(--navy);line-height:1.6}
@@ -96,19 +104,19 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .dash-cd-num{font-size:4rem;font-weight:900;color:var(--gold);line-height:1}
 .dash-cd-unit{font-size:.85rem;text-transform:uppercase;opacity:.75;margin-top:6px;letter-spacing:1px}
 .dash-date{margin-top:16px;font-size:1.1rem;color:var(--gold);font-weight:700}
-.dash-statsbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.dash-statsbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;justify-content:center}
 .dash-stat{background:#fff;border-radius:10px;padding:10px 16px;flex:1;min-width:120px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .dash-stat-num{font-size:1.8rem;font-weight:900;color:var(--navy)}
 .dash-stat-lbl{font-size:.72rem;color:#777;text-transform:uppercase;letter-spacing:.5px}
-.dash-section-lbl{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);margin:20px 0 10px;border-bottom:2px solid var(--gold);padding-bottom:4px}
-.act-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.dash-section-lbl{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);margin:20px 0 10px;border-bottom:2px solid var(--gold);padding-bottom:4px;text-align:center}
+.act-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;justify-items:center}
 .act-tile{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;border:2px solid transparent;transition:.2s}
 .act-tile:hover{border-color:var(--gold);transform:translateY(-2px)}
 .act-tile-num{font-size:2.4rem;font-weight:900;color:var(--navy);line-height:1}
 .act-tile-pct{font-size:.7rem;margin-top:4px;font-weight:700}
 .act-tile-bar{background:#eee;border-radius:4px;height:5px;margin-top:8px;overflow:hidden}
 .act-tile-bar-fill{height:100%;border-radius:4px;transition:width .5s}
-.sites-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px}
+.sites-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;justify-content:center}
 .site-tile{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .site-tile-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .site-tile-name{font-size:.85rem;font-weight:700;color:var(--navy)}
@@ -137,7 +145,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 
 <header>
   <h1>⛪ Zion Unity Fest 2026 — Volunteer Signup Portal</h1>
-  <span>Oct 4, 2026 · 400–800 Attendees · 8 Sites · 13 Categories</span>
+  <span>Oct 4, 2026</span>
 </header>
 
 <div class="tab-bar">
@@ -202,8 +210,21 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 
 <!-- ══ MATRIX ══ -->
 <div id="tab-matrix" class="form-panel">
+  <!-- Lock Gate -->
+  <div id="matrix-lock" style="max-width:420px;margin:60px auto;background:#fff;border-radius:16px;padding:40px 36px;box-shadow:0 4px 20px rgba(0,0,0,.15);text-align:center">
+    <div style="font-size:3rem;margin-bottom:12px">🔒</div>
+    <h2 style="color:var(--navy);font-size:1.3rem;margin-bottom:8px">Coordinator Access Only</h2>
+    <p style="color:#666;font-size:.9rem;margin-bottom:24px">This page is restricted to Site Coordinators. Please enter the access code to continue.</p>
+    <p style="font-size:.75rem;color:#888;margin-bottom:6px">400–800 Attendees · 8 Sites · 13 Categories</p>
+    <label style="display:block;font-size:.85rem;font-weight:700;color:var(--navy);margin-bottom:6px;text-align:left">Coordinator Access Code</label>
+    <input id="matrix-code" type="password" placeholder="Enter access code" style="width:100%;padding:10px 12px;border:1.5px solid #ccd;border-radius:8px;font-size:.95rem;margin-bottom:12px">
+    <div id="matrix-err" style="display:none;color:#c0392b;font-size:.83rem;margin-bottom:10px">❌ Incorrect code. Please try again.</div>
+    <button onclick="unlockMatrix()" style="width:100%;padding:12px;background:var(--coord);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer">🔓 Unlock</button>
+  </div>
+  <!-- Matrix Content (hidden until unlocked) -->
+  <div id="matrix-content" style="display:none">
   <p class="section-title">Volunteer Requirements by Site</p>
-  <p class="section-sub">Required volunteer counts · Oct 4, 2026</p>
+  <p class="section-sub">Required volunteer counts · Oct 4, 2026 · 400–800 Attendees · 8 Sites · 13 Categories</p>
   <div class="matrix-section">
     <table class="matrix-table">
       <thead>
@@ -211,15 +232,16 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
           <th>Activity</th>
           <th class="cathedral">The Cathedral</th>
           <th class="kecoughtan">Kecoughtan Road</th>
-          <th>New Beginnings</th><th>Newport News</th>
-          <th>Downtown Hampton</th><th>Ingleside Road</th>
-          <th>Port Norfolk</th><th>Downtown Franklin</th>
+          <th class="newbeg">New Beginnings</th><th class="newport">Newport News</th>
+          <th class="hampton">Downtown Hampton</th><th class="ingleside">Ingleside Road</th>
+          <th class="norfolk">Port Norfolk</th><th class="franklin">Downtown Franklin</th>
           <th class="total-col">TOTAL</th><th>Deadline</th>
         </tr>
       </thead>
       <tbody id="matrix-body"></tbody>
     </table>
   </div>
+  </div><!-- end matrix-content -->
 </div>
 
 <!-- ══ FOOD ══ -->
@@ -524,7 +546,7 @@ const TABS = {home:0,matrix:1,f1:2,f2:3,f3:4,f4:5,f5:6,f6:7,f7:8,f8:9,f9:10,f10:
 const SITES_LIST  = ['The Cathedral','New Beginnings','Newport News','Downtown Hampton',
                      'Kecoughtan Road','Ingleside Road','Port Norfolk','Downtown Franklin'];
 const SITE_KEYS   = ['cathedral','newbeg','newport','hampton','kecoughtan','ingleside','norfolk','franklin'];
-const SITE_COLORS = ['#C0392B','#8E44AD','#2980B9','#27AE60','#D35400','#16A085','#7F8C8D','#2C3E50'];
+const SITE_COLORS = ['#C0392B','#1565C0','#6D4C41','#7CB342','#4CAF50','#E65100','#C62828','#2E7D32'];
 
 const DASH_ACTS = [
   {key:'food',       emoji:'\uD83C\uDF7D', label:'Food'},
@@ -735,8 +757,8 @@ var ACTS_M = [
     act.vals.forEach(function(v,si){
       rowTotal+=v;
       var td=document.createElement('td'); td.textContent=v;
-      if(si===0) td.classList.add('cathedral');
-      else if(si===1) td.classList.add('kecoughtan');
+      var siteClasses=['cathedral','newbeg','newport','hampton','kecoughtan','ingleside','norfolk','franklin'];
+      if(siteClasses[si]) td.classList.add(siteClasses[si]);
       tr.appendChild(td);
     });
     var tdT=document.createElement('td'); tdT.textContent=rowTotal; tdT.classList.add('total-col'); tr.appendChild(tdT);
@@ -746,9 +768,10 @@ var ACTS_M = [
   var trow=document.createElement('tr'); trow.classList.add('total-row');
   var t0=document.createElement('td'); t0.textContent='SITE TOTAL'; trow.appendChild(t0);
   var grand=0;
+  var siteClasses2=['cathedral','newbeg','newport','hampton','kecoughtan','ingleside','norfolk','franklin'];
   for(var si=0;si<SITES_M.length;si++){
     var st=ACTS_M.reduce(function(s,a){ return s+a.vals[si]; },0); grand+=st;
-    var td=document.createElement('td'); td.textContent=st; trow.appendChild(td);
+    var td=document.createElement('td'); td.textContent=st; if(siteClasses2[si]) td.classList.add(siteClasses2[si]); trow.appendChild(td);
   }
   var tdG=document.createElement('td'); tdG.textContent=grand; tdG.classList.add('total-col'); trow.appendChild(tdG);
   var tdX=document.createElement('td'); trow.appendChild(tdX);
@@ -816,7 +839,23 @@ window.addEventListener('load', function() {
 
   loadDash();
   setInterval(loadDash, 120000);
+
+  // Matrix unlock
+  document.getElementById('matrix-code').addEventListener('keydown', function(e){
+    if(e.key==='Enter') unlockMatrix();
+  });
 });
+
+function unlockMatrix() {
+  var code = document.getElementById('matrix-code').value;
+  if (code === 'unity2026') {
+    document.getElementById('matrix-lock').style.display = 'none';
+    document.getElementById('matrix-content').style.display = 'block';
+  } else {
+    document.getElementById('matrix-err').style.display = 'block';
+    document.getElementById('matrix-code').value = '';
+  }
+}
 </script>
 </body>
 </html>
