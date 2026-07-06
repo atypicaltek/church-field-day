@@ -17,8 +17,8 @@ body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text)}
 header{background:var(--navy);color:#fff;padding:20px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
 header h1{font-size:2rem;font-weight:900;line-height:1.2;letter-spacing:.5px}
 header span{font-size:1rem;opacity:.75}
-.tab-bar{display:flex;flex-wrap:wrap;gap:4px;background:var(--navy);padding:0 20px 10px}
-.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:.82rem;font-weight:600;transition:.2s}
+.tab-bar{display:flex;flex-wrap:wrap;gap:4px;background:var(--navy);padding:0 10px 10px;justify-content:space-evenly}
+.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:.97rem;font-weight:600;transition:.2s;flex:1;text-align:center}
 .tab-btn:hover{background:rgba(255,255,255,.25)}
 .tab-btn.active{background:var(--gold);color:var(--navy)}
 .tab-btn.choir-btn{background:rgba(74,14,127,.5)}
@@ -75,7 +75,7 @@ textarea{resize:vertical;min-height:80px}
 .req-badge.choir-badge{background:var(--choir);color:#fff}
 .req-badge.coord-badge{background:var(--coord);color:#fff}
 .matrix-section{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.10);overflow-x:visible}
-.matrix-table{width:100%;border-collapse:collapse;font-size:.95rem;table-layout:fixed}
+.matrix-table{width:100%;border-collapse:collapse;font-size:1.05rem;table-layout:fixed}
 .matrix-table th{background:var(--blue);color:#fff;padding:12px 8px;text-align:center;word-wrap:break-word}
 .matrix-table th:first-child{text-align:left;min-width:130px}
 .matrix-table td{padding:10px 8px;border:1px solid #dde;text-align:center}
@@ -226,7 +226,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   </div>
   <!-- Matrix Content (hidden until unlocked) -->
   <div id="matrix-content" style="display:none">
-  <div style="text-align:right;margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1JmUA5WzgHxuLnODD-96rtYtgH68dJvSaNaW5Vhp2pSI/view" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#1565C0;color:#fff;border-radius:20px;font-size:.85rem;font-weight:700;text-decoration:none">📊 View Master Google Sheet</a></div>  <p class="section-title">Volunteer Requirements by Site</p>
+  <p class="section-title">Volunteer Requirements by Site</p>
   <p class="section-sub">Required volunteer counts · Oct 4, 2026 · 400–800 Attendees · 8 Sites · 13 Categories</p>
   <div class="matrix-section">
     <table class="matrix-table">
@@ -244,6 +244,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
       <tbody id="matrix-body"></tbody>
     </table>
   </div>
+  <div style="text-align:center;margin-top:24px"><a href="https://docs.google.com/spreadsheets/d/1JmUA5WzgHxuLnODD-96rtYtgH68dJvSaNaW5Vhp2pSI/view" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#1565C0;color:#fff;border-radius:24px;font-size:1.28rem;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15)">📊 View Master Google Sheet</a></div>
   </div><!-- end matrix-content -->
 </div>
 
@@ -741,17 +742,17 @@ function submitForm(e, key, form) {
 // ── MATRIX ───────────────────────────────────────────────────
 var SITES_M = ['The Cathedral','Kecoughtan Road','New Beginnings','Newport News','Downtown Hampton','Ingleside Road','Port Norfolk','Downtown Franklin'];
 var ACTS_M = [
-  {name:'Food Servers',     vals:[8,6,5,5,5,5,5,5],  dl:'3 wks'},
-  {name:'Drinks',           vals:[5,2,1,1,1,1,1,1],  dl:'3 wks'},
-  {name:'Games',            vals:[5,1,1,1,1,1,1,1],  dl:'2 wks'},
-  {name:'DJ / Music',       vals:[1,1,1,1,1,1,1,1],  dl:'2 wks'},
-  {name:'Karaoke',          vals:[1,1,1,1,1,1,1,1],  dl:'2 wks'},
-  {name:'Basketball (teams)',vals:[1,1,1,1,1,1,1,1], dl:'3 wks'},
-  {name:'Kid Games',        vals:[2,2,2,2,2,2,2,2],  dl:'2 wks'},
-  {name:'Parking',          vals:[4,2,1,1,1,1,0,1],  dl:'2 wks'},
-  {name:'Site Setup',       vals:[3,3,3,3,3,3,3,3],  dl:'2 wks'},
-  {name:'Popcorn Machine',  vals:[1,1,1,1,1,1,1,1],  dl:'2 wks'},
-  {name:'Pretzels',         vals:[1,1,1,1,1,1,1,1],  dl:'2 wks'},
+  {name:'Food Servers',     vals:[8,6,5,5,5,5,5,5],  dlWeeks:3},
+  {name:'Drinks',           vals:[5,2,1,1,1,1,1,1],  dlWeeks:3},
+  {name:'Games',            vals:[5,1,1,1,1,1,1,1],  dlWeeks:2},
+  {name:'DJ / Music',       vals:[1,1,1,1,1,1,1,1],  dlWeeks:2},
+  {name:'Karaoke',          vals:[1,1,1,1,1,1,1,1],  dlWeeks:2},
+  {name:'Basketball (teams)',vals:[1,1,1,1,1,1,1,1], dlWeeks:3},
+  {name:'Kid Games',        vals:[2,2,2,2,2,2,2,2],  dlWeeks:2},
+  {name:'Parking',          vals:[4,2,1,1,1,1,0,1],  dlWeeks:2},
+  {name:'Site Setup',       vals:[3,3,3,3,3,3,3,3],  dlWeeks:2},
+  {name:'Popcorn Machine',  vals:[1,1,1,1,1,1,1,1],  dlWeeks:2},
+  {name:'Pretzels',         vals:[1,1,1,1,1,1,1,1],  dlWeeks:2},
 ];
 (function(){
   var tbody = document.getElementById('matrix-body');
@@ -768,7 +769,18 @@ var ACTS_M = [
       tr.appendChild(td);
     });
     var tdT=document.createElement('td'); tdT.textContent=rowTotal; tdT.classList.add('total-col'); tr.appendChild(tdT);
-    var tdDl=document.createElement('td'); tdDl.textContent=act.dl; tr.appendChild(tdDl);
+    var tdDl=document.createElement('td');
+    var eventDate=new Date('2026-10-04');
+    var dlDate=new Date(eventDate); dlDate.setDate(dlDate.getDate()-act.dlWeeks*7);
+    var now=new Date(); var msLeft=dlDate-now; var daysLeft=Math.ceil(msLeft/86400000);
+    var weeksLeft=act.dlWeeks; // original weeks before event
+    // Calculate actual calendar date string
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dlLabel=months[dlDate.getMonth()]+' '+dlDate.getDate();
+    tdDl.textContent=dlLabel+' ('+weeksLeft+' wks out)';
+    if(daysLeft<=7)  { tdDl.style.background='#FFB3C1'; tdDl.style.fontWeight='900'; }
+    else if(daysLeft<=14){ tdDl.style.background='#FFF176'; tdDl.style.fontWeight='700'; }
+    tr.appendChild(tdDl);
     tbody.appendChild(tr);
   });
   var trow=document.createElement('tr'); trow.classList.add('total-row');
@@ -780,7 +792,7 @@ var ACTS_M = [
     var td=document.createElement('td'); td.textContent=st; if(siteClasses2[si]) td.classList.add(siteClasses2[si]); trow.appendChild(td);
   }
   var tdG=document.createElement('td'); tdG.textContent=grand; tdG.classList.add('total-col'); trow.appendChild(tdG);
-  var tdX=document.createElement('td'); trow.appendChild(tdX);
+  var tdX=document.createElement('td'); tdX.textContent=''; trow.appendChild(tdX);
   tbody.appendChild(trow);
 })();
 
