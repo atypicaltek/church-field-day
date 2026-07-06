@@ -899,66 +899,65 @@ window.addEventListener('load', function() {
       setTimeout(function(){ banner.style.display='none'; }, 15000);
     }
 
-    // Handle ?cancel=TOKEN — call Apps Script via JSONP
+    // ── Cancel / Update token handling ──
+    // Cancel: fire-and-forget to Apps Script (no response needed), show immediate banner
+    // Update: read activity from URL param — no API call needed
+
+    function showBanner(text, cls, isHtml) {
+      var b = document.getElementById('status-banner');
+      var m = document.getElementById('status-msg');
+      if (!b || !m) return;
+      if (isHtml) m.innerHTML = text; else m.textContent = text;
+      b.className = 'status-banner ' + cls;
+      b.style.display = 'block';
+      setTimeout(function(){ b.style.display='none'; }, 18000);
+    }
+
+    var params       = new URLSearchParams(window.location.search);
+    var cancelToken  = params.get('cancel');
+    var updateToken  = params.get('update');
+    var actParam     = decodeURIComponent(params.get('act') || 'your signup');
+    var msg          = params.get('msg');
+
     if (cancelToken) {
-      showBanner('Processing cancellation...', 'update');
-      var cbName = 'zufCancel_' + Date.now();
-      window[cbName] = function(data) {
-        delete window[cbName];
-        if (data.ok) {
-          showBanner((data.name ? data.name + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.', 'cancelled');
-          loadDash();
-        } else {
-          showBanner('This cancellation link is invalid or has already been used.', 'invalid');
-        }
-        // Clean URL
-        history.replaceState({}, '', window.location.pathname);
-      };
-      var s = document.createElement('script');
-      s.src = WEB_APP_URL + '?action=cancel&token=' + encodeURIComponent(cancelToken) + '&callback=' + cbName;
-      document.head.appendChild(s);
+      // Fire-and-forget: browser hits the URL, Apps Script processes cancel regardless of response
+      var fireUrl = WEB_APP_URL + '?action=cancel&token=' + encodeURIComponent(cancelToken) + '&t=' + Date.now();
+      // Method 1: fetch no-cors (modern browsers)
+      if (window.fetch) {
+        fetch(fireUrl, {mode:'no-cors'}).catch(function(){});
+      }
+      // Method 2: Image tag (universal fallback)
+      new Image().src = fireUrl + '&m=img';
+      // Show immediate confirmation — no waiting for server response
+      showBanner('Your signup has been cancelled. A confirmation email will be sent to you shortly.', 'cancelled');
+      loadDash();
+      history.replaceState({}, '', window.location.pathname);
     }
 
-    // Handle ?update=TOKEN — call Apps Script via JSONP
     else if (updateToken) {
-      showBanner('Loading update options...', 'update');
-      var cbName2 = 'zufUpdate_' + Date.now();
-      window[cbName2] = function(data) {
-        delete window[cbName2];
-        if (data.ok) {
-          var who = data.name ? '<strong>' + data.name + '</strong>: ' : '';
-          var act = data.activity || 'your signup';
-          var clink = data.cancelUrl || '';
-          showBanner(who + 'To update your <strong>' + act + '</strong> signup &#8212; ' +
-            (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register below.' : 'cancel your current signup then re-register.'),
-            'update', true);
-        } else {
-          showBanner('This update link is invalid or has already been used.', 'invalid');
-        }
-        history.replaceState({}, '', window.location.pathname);
-      };
-      var s2 = document.createElement('script');
-      s2.src = WEB_APP_URL + '?action=update&token=' + encodeURIComponent(updateToken) + '&callback=' + cbName2;
-      document.head.appendChild(s2);
+      // No API call needed — activity name is in the URL
+      var cancelLink = window.location.origin + window.location.pathname + '?cancel=' + encodeURIComponent(updateToken);
+      var txt = 'To update your <strong>' + actParam + '</strong> signup: ' +
+        '<a href="' + cancelLink + '" style="color:#7B5800;font-weight:700;text-decoration:underline">Cancel Current Signup</a>' +
+        ' then re-register below.';
+      showBanner(txt, 'update', true);
+      history.replaceState({}, '', window.location.pathname);
     }
 
-    // Handle ?msg=xxx (redirect-based fallback)
     else if (msg) {
       var who  = decodeURIComponent(params.get('who') || '');
-      var act  = decodeURIComponent(params.get('act') || 'your signup');
-      var clink = decodeURIComponent(params.get('clink') || '');
       if (msg === 'cancelled') {
         showBanner((who ? who + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.', 'cancelled');
       } else if (msg === 'update') {
-        var txt = (who ? '<strong>' + who + '</strong>: ' : '') + 'To update your <strong>' + act + '</strong> signup &#8212; ' +
+        var clink = decodeURIComponent(params.get('clink') || '');
+        var txt2 = (who ? '<strong>' + who + '</strong>: ' : '') + 'To update your <strong>' + actParam + '</strong> signup — ' +
           (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register.' : 'cancel then re-register.');
-        showBanner(txt, 'update', true);
+        showBanner(txt2, 'update', true);
       } else if (msg === 'invalid') {
         showBanner('This link is invalid or has already been used.', 'invalid');
       }
       history.replaceState({}, '', window.location.pathname);
     }
-  })();
 
   // Matrix unlock
   document.getElementById('matrix-code').addEventListener('keydown', function(e){
