@@ -641,7 +641,7 @@ function renderActOverview() {
     tile.style.borderColor = color;
     tile.title = act.label;
     tile.innerHTML =
-      '<div style="font-size:1.3rem">' + act.emoji + '</div>' +
+      '<div style="font-size:2rem;line-height:1;margin-bottom:2px">' + act.emoji + '</div>' +
       '<div class="act-tile-num" style="color:'+color+'">' + signed + '</div>' +
       '<div class="act-tile-pct" style="color:'+color+'">' + (needed>0?pct+'%':'Open') + '</div>' +
       '<div class="act-tile-bar"><div class="act-tile-bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div>';
@@ -669,7 +669,7 @@ function renderSitesOverview(data) {
     tile.innerHTML =
       '<div class="site-tile-hdr">' +
         '<span class="site-tile-name">' + site + '</span>' +
-        '<span class="site-tile-badge" style="background:'+color+'">' + siteTotal + '/' + siteNeeded + '</span>' +
+        '<span class="site-tile-badge" style="background:'+color+'">' + siteTotal + '</span>' +
       '</div>' +
       '<div style="font-size:2rem;font-weight:900;color:'+color+';line-height:1;margin:6px 0 4px">' + siteTotal + '</div>' +
       '<div class="site-tile-bar"><div class="site-tile-bar-fill" style="width:'+pct+'%;background:'+barColor+'"></div></div>';
