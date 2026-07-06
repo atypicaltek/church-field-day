@@ -109,18 +109,18 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .dash-stat-num{font-size:1.8rem;font-weight:900;color:var(--navy)}
 .dash-stat-lbl{font-size:.72rem;color:#777;text-transform:uppercase;letter-spacing:.5px}
 .dash-section-lbl{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);margin:20px 0 10px;border-bottom:2px solid var(--gold);padding-bottom:4px;text-align:center}
-.act-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;justify-items:center}
-.act-tile{background:#fff;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;border:2px solid transparent;transition:.2s}
+.act-overview{display:grid;grid-template-columns:repeat(13,1fr);gap:10px;margin-bottom:20px}
+.act-tile{background:#fff;border-radius:12px;padding:0;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);cursor:pointer;border:3px solid transparent;transition:.2s;aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .act-tile:hover{border-color:var(--gold);transform:translateY(-2px)}
-.act-tile-num{font-size:2.4rem;font-weight:900;color:var(--navy);line-height:1}
-.act-tile-pct{font-size:.7rem;margin-top:4px;font-weight:700}
-.act-tile-bar{background:#eee;border-radius:4px;height:5px;margin-top:8px;overflow:hidden}
+.act-tile-num{font-size:2rem;font-weight:900;line-height:1}
+.act-tile-pct{font-size:.68rem;margin-top:3px;font-weight:700}
+.act-tile-bar{background:#eee;border-radius:4px;height:5px;margin-top:6px;overflow:hidden;width:70%}
 .act-tile-bar-fill{height:100%;border-radius:4px;transition:width .5s}
-.sites-overview{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;justify-content:center}
-.site-tile{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.sites-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.site-tile{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.10);border-left:5px solid #ccc}
 .site-tile-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.site-tile-name{font-size:.85rem;font-weight:700;color:var(--navy)}
-.site-tile-badge{font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:20px;color:#fff}
+.site-tile-name{font-size:.9rem;font-weight:700;color:var(--navy)}
+.site-tile-badge{font-size:.85rem;font-weight:900;padding:2px 10px;border-radius:20px;color:#fff}
 .site-tile-bar{background:#eee;border-radius:4px;height:7px;overflow:hidden}
 .site-tile-bar-fill{height:100%;border-radius:4px;transition:width .6s}
 .dash-refresh{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:6px 16px;font-size:.78rem;cursor:pointer;margin-left:8px}
@@ -128,6 +128,9 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 
 /* ── QR GRID ── */
 .qr-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:14px;margin-top:8px}
+@media(max-width:1100px){.act-overview{grid-template-columns:repeat(7,1fr)}}
+@media(max-width:700px){.act-overview{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:800px){.sites-overview{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.qr-grid{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:560px){.qr-grid{grid-template-columns:repeat(2,1fr)}}
 .qr-card{background:#fff;border-radius:14px;padding:14px 10px 12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.12);cursor:pointer;border:2px solid transparent;transition:.2s;display:flex;flex-direction:column;align-items:center}
@@ -635,6 +638,7 @@ function renderActOverview() {
     var color  = pct>=100?'#375623':pct>=50?'#BF8F00':'#6D28D9';
     var tile = document.createElement('div');
     tile.className = 'act-tile';
+    tile.style.borderColor = color;
     tile.title = act.label;
     tile.innerHTML =
       '<div style="font-size:1.3rem">' + act.emoji + '</div>' +
@@ -661,11 +665,13 @@ function renderSitesOverview(data) {
     var barColor = pct>=100?'#375623':pct>=50?'#BF8F00':color;
     var tile = document.createElement('div');
     tile.className = 'site-tile';
+    tile.style.borderLeftColor = color;
     tile.innerHTML =
       '<div class="site-tile-hdr">' +
         '<span class="site-tile-name">' + site + '</span>' +
         '<span class="site-tile-badge" style="background:'+color+'">' + siteTotal + '/' + siteNeeded + '</span>' +
       '</div>' +
+      '<div style="font-size:2rem;font-weight:900;color:'+color+';line-height:1;margin:6px 0 4px">' + siteTotal + '</div>' +
       '<div class="site-tile-bar"><div class="site-tile-bar-fill" style="width:'+pct+'%;background:'+barColor+'"></div></div>';
     grid.appendChild(tile);
   });
