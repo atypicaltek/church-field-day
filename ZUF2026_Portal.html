@@ -19,7 +19,7 @@ header{background:var(--navy);color:#fff;padding:8px 16px;display:flex;flex-dire
 header h1{font-size:1.3rem;font-weight:900;line-height:1.1;letter-spacing:.5px}
 header span{font-size:.75rem;opacity:.75}
 .tab-bar{display:flex;flex-wrap:nowrap;gap:3px;background:var(--navy);padding:0 6px 6px;justify-content:space-between;flex-shrink:0;overflow:hidden}
-.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:5px 6px;border-radius:5px 5px 0 0;cursor:pointer;font-size:.62rem;font-weight:600;transition:.2s;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:5px 6px;border-radius:5px 5px 0 0;cursor:pointer;font-size:.93rem;font-weight:600;transition:.2s;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-btn:hover{background:rgba(255,255,255,.25)}
 .tab-btn.active{background:var(--gold);color:var(--navy)}
 main{flex:1;overflow:hidden;padding:0;min-height:0}
@@ -111,13 +111,13 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .dash-date{font-size:.8rem;color:var(--gold);font-weight:700;white-space:nowrap}
 .dash-statsbar{display:flex;gap:8px;margin:5px 0;justify-content:center;flex-shrink:0}
 .dash-stat{background:#fff;border-radius:8px;padding:5px 12px;flex:1;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.dash-stat-num{font-size:1.2rem;font-weight:900;color:var(--navy);line-height:1}
+.dash-stat-num{font-size:1.8rem;font-weight:900;color:var(--navy);line-height:1}
 .dash-stat-lbl{font-size:.62rem;color:#777;text-transform:uppercase;letter-spacing:.5px}
 .dash-section-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);margin:4px 0 3px;border-bottom:1.5px solid var(--gold);padding-bottom:2px;text-align:center;flex-shrink:0}
 .act-overview{display:grid;grid-template-columns:repeat(13,1fr);gap:5px;flex-shrink:0}
 .act-tile{background:#fff;border-radius:8px;padding:4px 2px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:2px solid transparent;transition:.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:52px}
 .act-tile:hover{border-color:var(--gold)}
-.act-tile-num{font-size:1.3rem;font-weight:900;line-height:1}
+.act-tile-num{font-size:1.95rem;font-weight:900;line-height:1}
 .act-tile-pct{font-size:.58rem;margin-top:2px;font-weight:700}
 .act-tile-bar{background:#eee;border-radius:3px;height:4px;margin-top:4px;overflow:hidden;width:70%}
 .act-tile-bar-fill{height:100%;border-radius:3px;transition:width .5s}
@@ -125,7 +125,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .site-tile{background:#fff;border-radius:8px;padding:6px 10px;box-shadow:0 1px 5px rgba(0,0,0,.08);border-left:4px solid #ccc}
 .site-tile-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .site-tile-name{font-size:.75rem;font-weight:700;color:var(--navy)}
-.site-tile-badge{font-size:.75rem;font-weight:900;padding:1px 8px;border-radius:20px;color:#fff}
+.site-tile-badge{font-size:1.1rem;font-weight:900;padding:1px 8px;border-radius:20px;color:#fff}
 .site-tile-bar{background:#eee;border-radius:3px;height:5px;overflow:hidden}
 .site-tile-bar-fill{height:100%;border-radius:3px;transition:width .6s}
 .dash-refresh{background:var(--navy);color:#fff;border:none;border-radius:20px;padding:4px 12px;font-size:.7rem;cursor:pointer;margin-left:6px}
@@ -139,7 +139,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .qr-label{font-size:.68rem;font-weight:700;color:var(--navy);line-height:1.2}
 .qr-canvas{display:none}  /* hide QR images in no-scroll layout */
 .qr-scan-hint{display:none}
-.qr-count{font-size:1.1rem;font-weight:900;color:var(--navy);line-height:1}
+.qr-count{font-size:1.65rem;font-weight:900;color:var(--navy);line-height:1}
 .qr-open-btn{display:inline-block;margin-top:2px;padding:3px 8px;background:var(--blue);color:#fff;border:none;border-radius:12px;font-size:.62rem;cursor:pointer;font-weight:600}
 .qr-canvas{display:flex;justify-content:center;margin-bottom:0}
 .qr-canvas canvas,.qr-canvas img{border-radius:8px}
@@ -180,41 +180,49 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 <!-- ══ HOME ══ -->
 <div id="tab-home" class="form-panel active">
 
-  <!-- Countdown -->
-  <div class="dash-countdown">
-    <div class="dash-cd-label">Countdown to Event Day</div>
-    <div class="dash-cd-boxes">
-      <div class="dash-cd-box"><div class="dash-cd-num" id="cd-days">--</div><div class="dash-cd-unit">Days</div></div>
-      <div class="dash-cd-box"><div class="dash-cd-num" id="cd-hours">--</div><div class="dash-cd-unit">Hours</div></div>
-      <div class="dash-cd-box"><div class="dash-cd-num" id="cd-mins">--</div><div class="dash-cd-unit">Mins</div></div>
-      <div class="dash-cd-box"><div class="dash-cd-num" id="cd-secs">--</div><div class="dash-cd-unit">Secs</div></div>
+  <!-- TOP HALF: stats + activity tiles + site tiles -->
+  <div style="flex:0 0 50%;display:flex;flex-direction:column;overflow:hidden;gap:0">
+
+    <!-- Countdown -->
+    <div class="dash-countdown">
+      <div class="dash-cd-label">Countdown to Event Day</div>
+      <div class="dash-cd-boxes">
+        <div class="dash-cd-box"><div class="dash-cd-num" id="cd-days">--</div><div class="dash-cd-unit">Days</div></div>
+        <div class="dash-cd-box"><div class="dash-cd-num" id="cd-hours">--</div><div class="dash-cd-unit">Hours</div></div>
+        <div class="dash-cd-box"><div class="dash-cd-num" id="cd-mins">--</div><div class="dash-cd-unit">Mins</div></div>
+        <div class="dash-cd-box"><div class="dash-cd-num" id="cd-secs">--</div><div class="dash-cd-unit">Secs</div></div>
+      </div>
+      <div class="dash-date">Saturday, October 4, 2026</div>
     </div>
-    <div class="dash-date">Saturday, October 4, 2026</div>
-  </div>
 
-  <!-- Stats bar -->
-  <div class="dash-statsbar">
-    <div class="dash-stat"><div class="dash-stat-num" id="stat-total">--</div><div class="dash-stat-lbl">Total Signed Up</div></div>
-    <div class="dash-stat"><div class="dash-stat-num" id="stat-needed">--</div><div class="dash-stat-lbl">Volunteers Needed</div></div>
-    <div class="dash-stat"><div class="dash-stat-num">8</div><div class="dash-stat-lbl">Sites</div></div>
-    <div class="dash-stat"><div class="dash-stat-num">13</div><div class="dash-stat-lbl">Categories</div></div>
-    <div class="dash-stat" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px">
-      <span style="font-size:.78rem;color:#888">Updated: <span id="stat-updated">--</span></span>
-      <button class="dash-refresh" onclick="loadDash()">↻ Refresh</button>
+    <!-- Stats bar -->
+    <div class="dash-statsbar">
+      <div class="dash-stat"><div class="dash-stat-num" id="stat-total">--</div><div class="dash-stat-lbl">Total Signed Up</div></div>
+      <div class="dash-stat"><div class="dash-stat-num" id="stat-needed">--</div><div class="dash-stat-lbl">Volunteers Needed</div></div>
+      <div class="dash-stat"><div class="dash-stat-num">8</div><div class="dash-stat-lbl">Sites</div></div>
+      <div class="dash-stat"><div class="dash-stat-num">13</div><div class="dash-stat-lbl">Categories</div></div>
+      <div class="dash-stat" style="flex:2;display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="font-size:.72rem;color:#888">Updated: <span id="stat-updated">--</span></span>
+        <button class="dash-refresh" onclick="loadDash()">↻ Refresh</button>
+      </div>
     </div>
-  </div>
 
-  <!-- Activity overview tiles (number only) -->
-  <div class="dash-section-lbl">📊 Activity Signups</div>
-  <div class="act-overview" id="act-overview"></div>
+    <!-- Activity overview tiles -->
+    <div class="dash-section-lbl">📊 Activity Signups</div>
+    <div class="act-overview" id="act-overview"></div>
 
-  <!-- Site overview -->
-  <div class="dash-section-lbl">📍 Signups by Site</div>
-  <div class="sites-overview" id="sites-overview"></div>
+    <!-- Site overview -->
+    <div class="dash-section-lbl">📍 Signups by Site</div>
+    <div class="sites-overview" id="sites-overview"></div>
 
-  <!-- QR codes -->
-  <div class="dash-section-lbl">📱 Tap to Sign Up</div>
-  <div class="qr-grid" id="qr-grid"></div>
+  </div><!-- end top half -->
+
+  <!-- BOTTOM HALF: QR tap-to-sign-up cards -->
+  <div style="flex:0 0 50%;display:flex;flex-direction:column;overflow:hidden;min-height:0">
+    <div class="dash-section-lbl">📱 Tap to Sign Up</div>
+    <div class="qr-grid" id="qr-grid"></div>
+  </div><!-- end bottom half -->
+
 </div>
 
 <!-- ══ MATRIX ══ -->
@@ -1138,10 +1146,10 @@ function renderContacts(data) {
       html += '<td style="padding:8px 12px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
       html += '<td style="padding:8px 12px">'+escHtml(r.name)+'</td>';
       html += '<td style="padding:8px 12px">'+escHtml(r.phone||'—')+'</td>';
-      html += '<td style="padding:8px 12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+      html += '<td style="padding:8px12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
       html += '</tr>';
     });
-     html += '</table>';
+    html += '</table>';
   }
 
   el.innerHTML = html;
