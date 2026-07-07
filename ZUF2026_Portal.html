@@ -171,7 +171,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   <button class="tab-btn"         onclick="showTab('f9')">⛺ Site Setup</button>
   <button class="tab-btn"         onclick="showTab('f10')">🍿 Popcorn</button>
   <button class="tab-btn"         onclick="showTab('f11')">🥨 Pretzels</button>
-  <button class="tab-btn coord-btn" onclick="showTab('f12')">📋 Site Coordinator</button>
+  <button class="tab-btn coord-btn" onclick="showTab('f12')">📋 Unity Fest Contacts</button>
   <button class="tab-btn choir-btn" onclick="showTab('f13')">🎶 Combined Choir</button>
 </div>
 
@@ -469,37 +469,15 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 <!-- ══ SITE COORDINATOR ══ -->
 <div id="tab-f12" class="form-panel">
   <span class="back-link" onclick="showTab('home')">← Back</span>
-  <div class="form-wrap coord-wrap">
-    <h2>📋 Site Coordinator Registration <span class="req-badge coord-badge">Leadership</span></h2>
-    <p class="form-desc">Register as a Site Lead or Activity Chair. Site Leads ensure their congregation participates in all activities. Activity Chairs own the logistics of one activity across all 8 sites.</p>
-    <form onsubmit="submitForm(event,'coordinator',this)">
-      <div class="form-group"><label>Site <span class="req">*</span></label><select name="Site" required><option value="">— Select your site —</option><option>The Cathedral</option><option>New Beginnings</option><option>Newport News</option><option>Downtown Hampton</option><option>Kecoughtan Road</option><option>Ingleside Road</option><option>Port Norfolk</option><option>Downtown Franklin</option></select></div>
-      <div class="form-group"><label>Your Name <span class="req">*</span></label><input type="text" name="Coordinator Name" required placeholder="Full name"></div>
-      <div class="form-group"><label>Phone Number <span class="req">*</span></label><input type="tel" name="Phone Number" required placeholder="(555) 555-5555"></div>
-      <div class="form-group"><label>Email Address <span class="req">*</span></label><input type="email" name="Email Address" required placeholder="your@email.com"></div>
-      <div class="form-group"><label>Role <span class="req">*</span></label>
-        <div class="radio-group">
-          <label><input type="radio" name="Role" value="Site Lead" required onclick="toggleActivityField(false)"> Site Lead — responsible for my site's participation in all activities</label>
-          <label><input type="radio" name="Role" value="Activity Chair" onclick="toggleActivityField(true)"> Activity Chair — responsible for one activity across all 8 sites</label>
-          <label><input type="radio" name="Role" value="Both - Site Lead and Activity Chair" onclick="toggleActivityField(true)"> Both — Site Lead AND Activity Chair</label>
-        </div>
+  <div class="form-wrap" style="max-width:860px">
+    <h2>📋 Unity Fest Contacts</h2>
+    <p class="form-desc">Site coordinators and activity leads for Zion Unity Fest 2026. Contact information is maintained by event leadership.</p>
+    <div id="contacts-body">
+      <div style="text-align:center;padding:40px 0;color:#888">
+        <div style="font-size:2rem;margin-bottom:12px">⏳</div>
+        <div>Loading contacts…</div>
       </div>
-      <div class="form-group" id="activity-field" style="display:none">
-        <label>Which Activity Are You Chairing? <span class="req">*</span></label>
-        <select name="Activity Chaired" id="activity-select">
-          <option value="">— Select activity —</option>
-          <option>Food Station</option><option>Drinks</option><option>Games</option>
-          <option>DJ / Music</option><option>Karaoke</option><option>Basketball Tournament</option>
-          <option>Kid Games</option><option>Parking</option><option>Site Setup</option>
-          <option>Popcorn Machine</option><option>Pretzels</option><option>Combined Choir</option>
-        </select>
-      </div>
-      <div class="form-group"><label>T-Shirt Size</label><select name="T-Shirt Size"><option value="">— Select —</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL</option><option>3XL</option></select></div>
-      <div class="form-group"><label>Dietary Restrictions / Allergies</label><input type="text" name="Dietary Restrictions" placeholder="For coordinator meal planning (optional)"></div>
-      <div class="form-group"><label>Notes / Questions</label><textarea name="Notes" placeholder="Anything the event director should know (optional)"></textarea></div>
-      <button type="submit" class="submit-btn coord-btn-submit">Submit Coordinator Registration</button>
-      <div class="success-msg" id="success-coordinator">✅ Registration received! A confirmation email with your details is on its way.</div>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -713,6 +691,104 @@ function showTab(id) {
     if (btn) btn.classList.add('active');
   }
   window.scrollTo(0,0);
+  if (id === 'f12') loadContacts();
+}
+
+// ── UNITY FEST CONTACTS ──────────────────────────────────────────
+var _contactsLoaded = false;
+function loadContacts() {
+  if (_contactsLoaded) return;
+  var url = WEB_APP_URL + '?action=leadership&t=' + Date.now();
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){ renderContacts(data); _contactsLoaded = true; })
+    .catch(function(){ renderContacts(null); });
+}
+
+function renderContacts(data) {
+  var el = document.getElementById('contacts-body');
+  if (!el) return;
+  if (!data || (!data.siteCoordinators.length && !data.siteActivityLeads.length && !data.projectLeads.length)) {
+    el.innerHTML = '<p style="text-align:center;color:#888;padding:32px 0">No contacts have been added yet. Leadership information will appear here once entered in the master sheet.</p>';
+    return;
+  }
+
+  var SITES = ['The Cathedral','New Beginnings','Newport News','Downtown Hampton',
+               'Kecoughtan Road','Ingleside Road','Port Norfolk','Downtown Franklin'];
+  var SITE_COLORS = ['#C0392B','#1565C0','#6D4C41','#7CB342','#4CAF50','#E65100','#C62828','#2E7D32'];
+
+  var html = '';
+
+  // ── SECTION 1: BY SITE ──
+  html += '<h3 style="color:#3B0764;border-bottom:2px solid #6D28D9;padding-bottom:6px;margin:0 0 20px">By Site</h3>';
+
+  SITES.forEach(function(site, si) {
+    var color = SITE_COLORS[si];
+    var coord = data.siteCoordinators.filter(function(r){ return r.site === site; })[0];
+    var actLeads = data.siteActivityLeads.filter(function(r){ return r.site === site; });
+
+    if (!coord && !actLeads.length) return; // skip empty sites
+
+    html += '<div style="border:2px solid '+color+';border-radius:10px;margin-bottom:22px;overflow:hidden">';
+    // Site header
+    html += '<div style="background:'+color+';color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px">';
+    html += '<strong style="font-size:1.05rem">'+site+'</strong>';
+    html += '</div>';
+    html += '<div style="padding:14px 16px">';
+
+    // Site coordinator
+    if (coord) {
+      html += '<div style="background:#f8f4ff;border-radius:7px;padding:10px 14px;margin-bottom:12px">';
+      html += '<div style="font-size:.75rem;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Site Coordinator</div>';
+      html += '<div style="font-weight:700;font-size:1rem;color:#1a1a1a">'+escHtml(coord.name)+'</div>';
+      if (coord.phone) html += '<div style="color:#555;font-size:.9rem">📞 '+escHtml(coord.phone)+'</div>';
+      if (coord.email) html += '<div style="color:#555;font-size:.9rem">✉️ <a href="mailto:'+escHtml(coord.email)+'" style="color:#6D28D9">'+escHtml(coord.email)+'</a></div>';
+      html += '</div>';
+    }
+
+    // Activity leads for this site
+    if (actLeads.length) {
+      html += '<div style="font-size:.75rem;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Activity Leads</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:.88rem">';
+      html += '<tr style="background:#f0f0f0"><th style="padding:6px 10px;text-align:left;color:#333">Activity</th><th style="padding:6px 10px;text-align:left;color:#333">Name</th><th style="padding:6px 10px;text-align:left;color:#333">Phone</th><th style="padding:6px 10px;text-align:left;color:#333">Email</th></tr>';
+      actLeads.forEach(function(r, ri) {
+        var bg = ri % 2 === 0 ? '#fff' : '#faf9ff';
+        html += '<tr style="background:'+bg+'">';
+        html += '<td style="padding:6px 10px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
+        html += '<td style="padding:6px 10px">'+escHtml(r.name)+'</td>';
+        html += '<td style="padding:6px 10px">'+escHtml(r.phone||'—')+'</td>';
+        html += '<td style="padding:6px 10px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+        html += '</tr>';
+      });
+      html += '</table>';
+    }
+
+    html += '</div></div>'; // end padding + site card
+  });
+
+  // ── SECTION 2: PROJECT-WIDE LEADS ──
+  if (data.projectLeads.length) {
+    html += '<h3 style="color:#3B0764;border-bottom:2px solid #6D28D9;padding-bottom:6px;margin:28px 0 16px">Project-Wide Activity Leads</h3>';
+    html += '<p style="color:#555;font-size:.9rem;margin-bottom:14px">These leaders oversee each activity across all 8 sites.</p>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:.88rem">';
+    html += '<tr style="background:#3B0764;color:#fff"><th style="padding:8px 12px;text-align:left">Activity</th><th style="padding:8px 12px;text-align:left">Lead Name</th><th style="padding:8px 12px;text-align:left">Phone</th><th style="padding:8px 12px;text-align:left">Email</th></tr>';
+    data.projectLeads.forEach(function(r, ri) {
+      var bg = ri % 2 === 0 ? '#fff' : '#f8f4ff';
+      html += '<tr style="background:'+bg+'">';
+      html += '<td style="padding:8px 12px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
+      html += '<td style="padding:8px 12px">'+escHtml(r.name)+'</td>';
+      html += '<td style="padding:8px 12px">'+escHtml(r.phone||'—')+'</td>';
+      html += '<td style="padding:8px 12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+  }
+
+  el.innerHTML = html;
+}
+
+function escHtml(s) {
+  return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 window.addEventListener('load', function() {
@@ -824,7 +900,7 @@ var QR_ACTS = [
   {id:'f9', key:'setup',       emoji:'\u26FA',        label:'Site Setup'},
   {id:'f10',key:'popcorn',     emoji:'\uD83C\uDF7F', label:'Popcorn Machine'},
   {id:'f11',key:'pretzels',    emoji:'\uD83E\uDD68', label:'Pretzels'},
-  {id:'f12',key:'coordinator', emoji:'\uD83D\uDCCB', label:'Site Coordinator'},
+  {id:'f12',key:'coordinator', emoji:'\uD83D\uDCCB', label:'Unity Fest Contacts'},
   {id:'f13',key:'choir',       emoji:'\uD83C\uDFB6', label:'Combined Choir'},
 ];
 
@@ -935,9 +1011,9 @@ window.addEventListener('load', function() {
     }
 
     else if (updateToken) {
-      // No API call needed — activity name is in the URL
       var cancelLink = window.location.origin + window.location.pathname + '?cancel=' + encodeURIComponent(updateToken);
-      var txt = 'To update your <strong>' + actParam + '</strong> signup: ' +
+      var actParam2  = decodeURIComponent(params.get('act') || 'your signup');
+      var txt = 'To update your <strong>' + actParam2 + '</strong> signup: ' +
         '<a href="' + cancelLink + '" style="color:#7B5800;font-weight:700;text-decoration:underline">Cancel Current Signup</a>' +
         ' then re-register below.';
       showBanner(txt, 'update', true);
@@ -946,11 +1022,12 @@ window.addEventListener('load', function() {
 
     else if (msg) {
       var who  = decodeURIComponent(params.get('who') || '');
+      var actParam3 = decodeURIComponent(params.get('act') || 'your signup');
       if (msg === 'cancelled') {
         showBanner((who ? who + ' — ' : '') + 'Your signup has been cancelled. A confirmation email has been sent.', 'cancelled');
       } else if (msg === 'update') {
         var clink = decodeURIComponent(params.get('clink') || '');
-        var txt2 = (who ? '<strong>' + who + '</strong>: ' : '') + 'To update your <strong>' + actParam + '</strong> signup — ' +
+        var txt2 = (who ? '<strong>' + who + '</strong>: ' : '') + 'To update your <strong>' + actParam3 + '</strong> signup — ' +
           (clink ? '<a href="' + clink + '" style="color:#7B5800;font-weight:700">Cancel Current Signup</a> then re-register.' : 'cancel then re-register.');
         showBanner(txt2, 'update', true);
       } else if (msg === 'invalid') {
@@ -977,5 +1054,100 @@ function unlockMatrix() {
     document.getElementById('matrix-code').value = '';
   }
 }
+
+// ── UNITY FEST CONTACTS ──────────────────────────────────────────
+var _contactsLoaded = false;
+function loadContacts() {
+  if (_contactsLoaded) return;
+  var url = WEB_APP_URL + '?action=leadership&t=' + Date.now();
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){ renderContacts(data); _contactsLoaded = true; })
+    .catch(function(){ renderContacts(null); });
+}
+
+function renderContacts(data) {
+  var el = document.getElementById('contacts-body');
+  if (!el) return;
+  if (!data || (!data.siteCoordinators.length && !data.siteActivityLeads.length && !data.projectLeads.length)) {
+    el.innerHTML = '<p style="text-align:center;color:#888;padding:32px 0">No contacts have been added yet. Leadership information will appear here once entered in the master sheet.</p>';
+    return;
+  }
+
+  var SITES = ['The Cathedral','New Beginnings','Newport News','Downtown Hampton',
+               'Kecoughtan Road','Ingleside Road','Port Norfolk','Downtown Franklin'];
+  var SITE_COLORS = ['#C0392B','#1565C0','#6D4C41','#7CB342','#4CAF50','#E65100','#C62828','#2E7D32'];
+
+  var html = '';
+
+  // ── SECTION 1: BY SITE ──
+  html += '<h3 style="color:#3B0764;border-bottom:2px solid #6D28D9;padding-bottom:6px;margin:0 0 20px">By Site</h3>';
+
+  SITES.forEach(function(site, si) {
+    var color = SITE_COLORS[si];
+    var coord = null;
+    for (var ci = 0; ci < data.siteCoordinators.length; ci++) {
+      if (data.siteCoordinators[ci].site === site) { coord = data.siteCoordinators[ci]; break; }
+    }
+    var actLeads = data.siteActivityLeads.filter(function(r){ return r.site === site; });
+    if (!coord && !actLeads.length) return;
+
+    html += '<div style="border:2px solid '+color+';border-radius:10px;margin-bottom:22px;overflow:hidden">';
+    html += '<div style="background:'+color+';color:#fff;padding:10px 16px">';
+    html += '<strong style="font-size:1.05rem">'+escHtml(site)+'</strong>';
+    html += '</div><div style="padding:14px 16px">';
+
+    if (coord) {
+      html += '<div style="background:#f8f4ff;border-radius:7px;padding:10px 14px;margin-bottom:12px">';
+      html += '<div style="font-size:.75rem;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Site Coordinator</div>';
+      html += '<div style="font-weight:700;font-size:1rem">'+escHtml(coord.name)+'</div>';
+      if (coord.phone) html += '<div style="color:#555;font-size:.9rem">📞 '+escHtml(coord.phone)+'</div>';
+      if (coord.email) html += '<div style="color:#555;font-size:.9rem">✉️ <a href="mailto:'+escHtml(coord.email)+'" style="color:#6D28D9">'+escHtml(coord.email)+'</a></div>';
+      html += '</div>';
+    }
+
+    if (actLeads.length) {
+      html += '<div style="font-size:.75rem;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Activity Leads</div>';
+      html += '<table style="width:100%;border-collapse:collapse;font-size:.88rem">';
+      html += '<tr style="background:#f0f0f0"><th style="padding:6px 10px;text-align:left">Activity</th><th style="padding:6px 10px;text-align:left">Name</th><th style="padding:6px 10px;text-align:left">Phone</th><th style="padding:6px 10px;text-align:left">Email</th></tr>';
+      actLeads.forEach(function(r, ri) {
+        var bg = ri % 2 === 0 ? '#fff' : '#faf9ff';
+        html += '<tr style="background:'+bg+'">';
+        html += '<td style="padding:6px 10px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
+        html += '<td style="padding:6px 10px">'+escHtml(r.name)+'</td>';
+        html += '<td style="padding:6px 10px">'+escHtml(r.phone||'—')+'</td>';
+        html += '<td style="padding:6px 10px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+        html += '</tr>';
+      });
+      html += '</table>';
+    }
+    html += '</div></div>';
+  });
+
+  // ── SECTION 2: PROJECT-WIDE LEADS ──
+  if (data.projectLeads.length) {
+    html += '<h3 style="color:#3B0764;border-bottom:2px solid #6D28D9;padding-bottom:6px;margin:28px 0 16px">Project-Wide Activity Leads</h3>';
+    html += '<p style="color:#555;font-size:.9rem;margin-bottom:14px">These leaders oversee each activity across all 8 sites.</p>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:.88rem">';
+    html += '<tr style="background:#3B0764;color:#fff"><th style="padding:8px 12px;text-align:left">Activity</th><th style="padding:8px 12px;text-align:left">Lead Name</th><th style="padding:8px 12px;text-align:left">Phone</th><th style="padding:8px 12px;text-align:left">Email</th></tr>';
+    data.projectLeads.forEach(function(r, ri) {
+      var bg = ri % 2 === 0 ? '#fff' : '#f8f4ff';
+      html += '<tr style="background:'+bg+'">';
+      html += '<td style="padding:8px 12px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
+      html += '<td style="padding:8px 12px">'+escHtml(r.name)+'</td>';
+      html += '<td style="padding:8px 12px">'+escHtml(r.phone||'—')+'</td>';
+      html += '<td style="padding:8px 12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+  }
+
+  el.innerHTML = html;
+}
+
+function escHtml(s) {
+  return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
-</body
+</body>
+</html>
