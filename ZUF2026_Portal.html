@@ -13,19 +13,16 @@
   --choir:#4A0E7F;--coord:#7B0000;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text)}
-header{background:var(--navy);color:#fff;padding:20px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px}
-header h1{font-size:2rem;font-weight:900;line-height:1.2;letter-spacing:.5px}
-header span{font-size:1rem;opacity:.75}
-.tab-bar{display:flex;flex-wrap:wrap;gap:4px;background:var(--navy);padding:0 10px 10px;justify-content:space-evenly}
-.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:8px 14px;border-radius:6px 6px 0 0;cursor:pointer;font-size:.97rem;font-weight:600;transition:.2s;flex:1;text-align:center}
+html,body{height:100%;overflow:hidden}
+body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text);display:flex;flex-direction:column}
+header{background:var(--navy);color:#fff;padding:8px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;flex-shrink:0}
+header h1{font-size:1.3rem;font-weight:900;line-height:1.1;letter-spacing:.5px}
+header span{font-size:.75rem;opacity:.75}
+.tab-bar{display:flex;flex-wrap:nowrap;gap:3px;background:var(--navy);padding:0 6px 6px;justify-content:space-between;flex-shrink:0;overflow:hidden}
+.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:5px 6px;border-radius:5px 5px 0 0;cursor:pointer;font-size:.62rem;font-weight:600;transition:.2s;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tab-btn:hover{background:rgba(255,255,255,.25)}
 .tab-btn.active{background:var(--gold);color:var(--navy)}
-.tab-btn.choir-btn{background:rgba(74,14,127,.5)}
-.tab-btn.choir-btn.active{background:var(--choir);color:#fff}
-.tab-btn.coord-btn{background:rgba(123,0,0,.5)}
-.tab-btn.coord-btn.active{background:var(--coord);color:#fff}
-main{max-width:100%;margin:0;padding:28px 24px}
+main{flex:1;overflow:hidden;padding:0;min-height:0}
 #tab-home{max-width:100%;text-align:center}
 #tab-matrix{max-width:100%;margin:0}
 #tab-f1,#tab-f2,#tab-f3,#tab-f4,#tab-f5,#tab-f6,#tab-f7,#tab-f8,#tab-f9,#tab-f10,#tab-f11,#tab-f12,#tab-f13{max-width:900px;margin:0 auto}
@@ -102,7 +99,7 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 .status-banner .close-btn{float:right;cursor:pointer;font-size:1.2rem;margin-left:16px;opacity:.7}
 
 /* ── HOME PAGE: single-screen no-scroll layout ── */
-#tab-home{display:flex;flex-direction:column;height:calc(100vh - 54px);overflow:hidden;gap:0;padding:6px 12px;box-sizing:border-box}
+#tab-home{display:flex;flex-direction:column;height:100%;overflow:hidden;gap:0;padding:6px 12px;box-sizing:border-box}
 
 /* ── DASHBOARD ── */
 .dash-countdown{background:var(--navy);border-radius:10px;padding:7px 16px;text-align:center;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
@@ -174,8 +171,8 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
   <button class="tab-btn"         onclick="showTab('f9')">⛺ Site Setup</button>
   <button class="tab-btn"         onclick="showTab('f10')">🍿 Popcorn</button>
   <button class="tab-btn"         onclick="showTab('f11')">🥨 Pretzels</button>
-  <button class="tab-btn coord-btn" onclick="showTab('f12')">📋 Unity Fest Contacts</button>
-  <button class="tab-btn choir-btn" onclick="showTab('f13')">🎶 Combined Choir</button>
+  <button class="tab-btn" onclick="showTab('f12')">📋 Unity Fest Contacts</button>
+  <button class="tab-btn" onclick="showTab('f13')">🎶 Combined Choir</button>
 </div>
 
 <main>
