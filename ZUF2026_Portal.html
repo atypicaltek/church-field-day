@@ -15,13 +15,15 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:Arial,sans-serif;background:var(--gray);color:var(--text);display:flex;flex-direction:column}
-header{background:var(--navy);color:#fff;padding:8px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;flex-shrink:0}
-header h1{font-size:1.3rem;font-weight:900;line-height:1.1;letter-spacing:.5px}
-header span{font-size:.75rem;opacity:.75}
+header{background:var(--navy);color:#fff;padding:10px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:3px;flex-shrink:0}
+header h1{font-size:1.95rem;font-weight:900;line-height:1.1;letter-spacing:.5px}
+header span{font-size:1.1rem;opacity:.75}
 .tab-bar{display:flex;flex-wrap:nowrap;gap:3px;background:var(--navy);padding:0 6px 6px;justify-content:space-between;flex-shrink:0;overflow:hidden}
-.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:5px 6px;border-radius:5px 5px 0 0;cursor:pointer;font-size:.93rem;font-weight:600;transition:.2s;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-btn{background:rgba(255,255,255,.12);color:#fff;border:none;padding:4px 4px 5px;border-radius:5px 5px 0 0;cursor:pointer;font-size:.93rem;font-weight:600;transition:.2s;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden}
 .tab-btn:hover{background:rgba(255,255,255,.25)}
 .tab-btn.active{background:var(--gold);color:var(--navy)}
+.tab-lbl{font-size:.72rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
+.tab-icon{font-size:1.1rem;line-height:1}
 main{flex:1;overflow:hidden;padding:0;min-height:0}
 #tab-home{max-width:100%;text-align:center}
 #tab-matrix{max-width:100%;margin:0}
@@ -102,26 +104,26 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 #tab-home{display:flex;flex-direction:column;height:100%;overflow:hidden;gap:0;padding:6px 12px;box-sizing:border-box}
 
 /* ── DASHBOARD ── */
-.dash-countdown{background:var(--navy);border-radius:10px;padding:7px 16px;text-align:center;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
-.dash-cd-label{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;opacity:.7;white-space:nowrap}
+.dash-countdown{background:var(--navy);border-radius:10px;padding:11px 16px;text-align:center;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.dash-cd-label{font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;opacity:.7;white-space:nowrap}
 .dash-cd-boxes{display:flex;justify-content:center;gap:8px}
-.dash-cd-box{background:rgba(255,255,255,.1);border:1.5px solid var(--gold);border-radius:8px;padding:4px 12px;min-width:54px;text-align:center}
-.dash-cd-num{font-size:1.6rem;font-weight:900;color:var(--gold);line-height:1}
-.dash-cd-unit{font-size:.6rem;text-transform:uppercase;opacity:.75;letter-spacing:1px}
-.dash-date{font-size:.8rem;color:var(--gold);font-weight:700;white-space:nowrap}
+.dash-cd-box{background:rgba(255,255,255,.1);border:1.5px solid var(--gold);border-radius:8px;padding:6px 14px;min-width:60px;text-align:center}
+.dash-cd-num{font-size:2.4rem;font-weight:900;color:var(--gold);line-height:1}
+.dash-cd-unit{font-size:.65rem;text-transform:uppercase;opacity:.75;letter-spacing:1px}
+.dash-date{font-size:.9rem;color:var(--gold);font-weight:700;white-space:nowrap}
 .dash-statsbar{display:flex;gap:8px;margin:5px 0;justify-content:center;flex-shrink:0}
 .dash-stat{background:#fff;border-radius:8px;padding:5px 12px;flex:1;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .dash-stat-num{font-size:1.8rem;font-weight:900;color:var(--navy);line-height:1}
 .dash-stat-lbl{font-size:.62rem;color:#777;text-transform:uppercase;letter-spacing:.5px}
 .dash-section-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);margin:4px 0 3px;border-bottom:1.5px solid var(--gold);padding-bottom:2px;text-align:center;flex-shrink:0}
-.act-overview{display:grid;grid-template-columns:repeat(13,1fr);gap:5px;flex-shrink:0}
+.act-overview{display:grid;grid-template-columns:repeat(13,1fr);gap:5px;flex:1;min-height:0;align-content:stretch}
 .act-tile{background:#fff;border-radius:8px;padding:4px 2px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:2px solid transparent;transition:.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:52px}
 .act-tile:hover{border-color:var(--gold)}
 .act-tile-num{font-size:1.95rem;font-weight:900;line-height:1}
 .act-tile-pct{font-size:.58rem;margin-top:2px;font-weight:700}
 .act-tile-bar{background:#eee;border-radius:3px;height:4px;margin-top:4px;overflow:hidden;width:70%}
 .act-tile-bar-fill{height:100%;border-radius:3px;transition:width .5s}
-.sites-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex-shrink:0}
+.sites-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex:1;min-height:0;align-content:stretch}
 .site-tile{background:#fff;border-radius:8px;padding:6px 10px;box-shadow:0 1px 5px rgba(0,0,0,.08);border-left:4px solid #ccc}
 .site-tile-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .site-tile-name{font-size:.75rem;font-weight:700;color:var(--navy)}
@@ -158,21 +160,21 @@ footer{text-align:center;padding:32px 0 20px;color:#888;font-size:.78rem}
 </header>
 
 <div class="tab-bar">
-  <button class="tab-btn active"  onclick="showTab('home')">🏠 Home</button>
-  <button class="tab-btn"         onclick="showTab('matrix')">📋 Coordinator Info</button>
-  <button class="tab-btn"         onclick="showTab('f1')">🍽 Food</button>
-  <button class="tab-btn"         onclick="showTab('f2')">🥤 Drinks</button>
-  <button class="tab-btn"         onclick="showTab('f3')">🎯 Games</button>
-  <button class="tab-btn"         onclick="showTab('f4')">🎵 DJ</button>
-  <button class="tab-btn"         onclick="showTab('f5')">🎤 Karaoke</button>
-  <button class="tab-btn"         onclick="showTab('f6')">🏀 Basketball</button>
-  <button class="tab-btn"         onclick="showTab('f7')">🧒 Kid Games</button>
-  <button class="tab-btn"         onclick="showTab('f8')">🅿 Parking</button>
-  <button class="tab-btn"         onclick="showTab('f9')">⛺ Site Setup</button>
-  <button class="tab-btn"         onclick="showTab('f10')">🍿 Popcorn</button>
-  <button class="tab-btn"         onclick="showTab('f11')">🥨 Pretzels</button>
-  <button class="tab-btn" onclick="showTab('f12')">📋 Unity Fest Contacts</button>
-  <button class="tab-btn" onclick="showTab('f13')">🎶 Combined Choir</button>
+  <button class="tab-btn active"  onclick="showTab('home')"><span class="tab-lbl">Home</span><span class="tab-icon">🏠</span></button>
+  <button class="tab-btn"         onclick="showTab('f12')"><span class="tab-lbl">Contacts</span><span class="tab-icon">📋</span></button>
+  <button class="tab-btn"         onclick="showTab('matrix')"><span class="tab-lbl">Coordinator</span><span class="tab-icon">📊</span></button>
+  <button class="tab-btn"         onclick="showTab('f1')"><span class="tab-lbl">Food</span><span class="tab-icon">🍽</span></button>
+  <button class="tab-btn"         onclick="showTab('f2')"><span class="tab-lbl">Drinks</span><span class="tab-icon">🥤</span></button>
+  <button class="tab-btn"         onclick="showTab('f3')"><span class="tab-lbl">Games</span><span class="tab-icon">🎯</span></button>
+  <button class="tab-btn"         onclick="showTab('f4')"><span class="tab-lbl">DJ</span><span class="tab-icon">🎵</span></button>
+  <button class="tab-btn"         onclick="showTab('f5')"><span class="tab-lbl">Karaoke</span><span class="tab-icon">🎤</span></button>
+  <button class="tab-btn"         onclick="showTab('f6')"><span class="tab-lbl">Basketball</span><span class="tab-icon">🏀</span></button>
+  <button class="tab-btn"         onclick="showTab('f7')"><span class="tab-lbl">Kid Games</span><span class="tab-icon">🧒</span></button>
+  <button class="tab-btn"         onclick="showTab('f8')"><span class="tab-lbl">Parking</span><span class="tab-icon">🅿</span></button>
+  <button class="tab-btn"         onclick="showTab('f9')"><span class="tab-lbl">Site Setup</span><span class="tab-icon">⛺</span></button>
+  <button class="tab-btn"         onclick="showTab('f10')"><span class="tab-lbl">Popcorn</span><span class="tab-icon">🍿</span></button>
+  <button class="tab-btn"         onclick="showTab('f11')"><span class="tab-lbl">Pretzels</span><span class="tab-icon">🥨</span></button>
+  <button class="tab-btn"         onclick="showTab('f13')"><span class="tab-lbl">Choir</span><span class="tab-icon">🎶</span></button>
 </div>
 
 <main>
@@ -1146,7 +1148,7 @@ function renderContacts(data) {
       html += '<td style="padding:8px 12px;font-weight:600;color:#3B0764">'+escHtml(r.activity)+'</td>';
       html += '<td style="padding:8px 12px">'+escHtml(r.name)+'</td>';
       html += '<td style="padding:8px 12px">'+escHtml(r.phone||'—')+'</td>';
-      html += '<td style="padding:8px12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
+      html += '<td style="padding:8px 12px">'+(r.email ? '<a href="mailto:'+escHtml(r.email)+'" style="color:#6D28D9">'+escHtml(r.email)+'</a>' : '—')+'</td>';
       html += '</tr>';
     });
     html += '</table>';
